@@ -384,23 +384,7 @@ Các trường hợp cần kiểm chứng:
 
 ---
 
-## 📸 8. Ảnh Minh chứng
-
-Có thể chụp các màn hình sau để đưa vào báo cáo:
-
-1. Swagger API `POST /auth/login`.
-2. Kết quả trả về JWT Token.
-3. `GET /api/categories` không có Token → `401`.
-4. Swagger Authorize bằng JWT Token.
-5. `staff-pos` → `200 OK`.
-6. `admin-dashboard` với Cashier → `403 Forbidden`.
-7. FormLogin của WinForms.
-8. Thông báo đăng nhập thành công.
-9. FormCategoryManagement hiển thị danh sách nhóm hàng sau khi đăng nhập.
-
----
-
-## 👨‍💻 9. Tác giả
+## 👨‍💻 8. Tác giả
 
 **Họ tên sinh viên:** [Nguyễn Vũ Trường Sơn]
 
