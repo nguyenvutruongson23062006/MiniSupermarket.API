@@ -44,20 +44,27 @@ namespace MiniSupermarket.API.Controllers
             }
         };
 
+        // ============================================================
         // 1. READ: Lấy toàn bộ danh sách nhóm hàng
         // GET /api/categories
+        // Admin và Cashier đều được phép xem
+        // ============================================================
         [HttpGet]
         public IActionResult GetAll()
         {
             return Ok(_categories);
         }
 
+        // ============================================================
         // 2. READ: Lấy chi tiết một nhóm hàng theo ID
         // GET /api/categories/{id}
+        // Admin và Cashier đều được phép xem
+        // ============================================================
         [HttpGet("{id}")]
         public IActionResult GetById(int id)
         {
-            var cat = _categories.FirstOrDefault(c => c.CategoryId == id);
+            var cat = _categories.FirstOrDefault(
+                c => c.CategoryId == id);
 
             if (cat == null)
             {
@@ -70,8 +77,11 @@ namespace MiniSupermarket.API.Controllers
             return Ok(cat);
         }
 
+        // ============================================================
         // 3. SEARCH: Tìm kiếm nhóm hàng
         // GET /api/categories/search?keyword=...
+        // Admin và Cashier đều được phép tìm kiếm
+        // ============================================================
         [HttpGet("search")]
         public IActionResult Search([FromQuery] string keyword)
         {
@@ -92,9 +102,13 @@ namespace MiniSupermarket.API.Controllers
             return Ok(result);
         }
 
+        // ============================================================
         // 4. CREATE: Thêm mới nhóm hàng
         // POST /api/categories
+        // CHỈ ADMIN được phép thêm
+        // ============================================================
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public IActionResult Create([FromBody] Category newCat)
         {
             if (string.IsNullOrWhiteSpace(newCat.CategoryName))
@@ -117,9 +131,13 @@ namespace MiniSupermarket.API.Controllers
                 newCat);
         }
 
+        // ============================================================
         // 5. UPDATE: Cập nhật thông tin nhóm hàng
         // PUT /api/categories/{id}
+        // CHỈ ADMIN được phép sửa
+        // ============================================================
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin")]
         public IActionResult Update(
             int id,
             [FromBody] Category updateCat)
@@ -141,9 +159,13 @@ namespace MiniSupermarket.API.Controllers
             return NoContent();
         }
 
+        // ============================================================
         // 6. DELETE: Xóa nhóm hàng theo ID
         // DELETE /api/categories/{id}
+        // CHỈ ADMIN được phép xóa
+        // ============================================================
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public IActionResult Delete(int id)
         {
             var cat = _categories.FirstOrDefault(
@@ -162,26 +184,35 @@ namespace MiniSupermarket.API.Controllers
             return NoContent();
         }
 
+        // ============================================================
         // 7. Kiểm tra quyền Admin
+        // GET /api/categories/admin-dashboard
+        // CHỈ ADMIN được phép truy cập
+        // ============================================================
         [HttpGet("admin-dashboard")]
         [Authorize(Roles = "Admin")]
         public IActionResult GetAdminDashboard()
         {
             return Ok(new
             {
-                message = "Chào mừng Admin! Bạn có toàn quyền quản trị hệ thống siêu thị mini."
+                message =
+                    "Chào mừng Admin! Bạn có toàn quyền quản trị hệ thống siêu thị mini."
             });
         }
 
+        // ============================================================
         // 8. Kiểm tra quyền chung cho nhân viên
-        // Admin và Cashier đều gọi được
+        // GET /api/categories/staff-pos
+        // ADMIN và CASHIER đều được phép truy cập
+        // ============================================================
         [HttpGet("staff-pos")]
         [Authorize(Roles = "Admin,Cashier")]
         public IActionResult GetStaffPos()
         {
             return Ok(new
             {
-                message = "Màn hình POS Thu ngân sẵn sàng phục vụ bán hàng."
+                message =
+                    "Màn hình POS Thu ngân sẵn sàng phục vụ bán hàng."
             });
         }
     }

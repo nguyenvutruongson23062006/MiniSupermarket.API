@@ -107,5 +107,15 @@ namespace MiniSupermarket.WinForms
                     MessageBoxIcon.Error);
             }
         }
+
+        private void groupBoxLogin_Enter(object sender, EventArgs e)
+        {
+
+        }
+
+        private void groupBoxLogin_Enter_1(object sender, EventArgs e)
+        {
+
+        }
     }
 }
