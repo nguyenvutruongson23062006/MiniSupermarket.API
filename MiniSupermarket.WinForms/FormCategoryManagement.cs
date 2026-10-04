@@ -8,9 +8,13 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Net.Http.Json;
+using System.Net.Http.Headers;
 
 namespace MiniSupermarket.WinForms
 {
+    // =============================================================
+    // FORM QUẢN LÝ NHÓM HÀNG
+    // =============================================================
     public partial class FormCategoryManagement : Form
     {
         private static readonly HttpClient _client = new HttpClient
@@ -30,14 +34,39 @@ namespace MiniSupermarket.WinForms
         }
 
         // =========================================================
+        // TẠO HTTP CLIENT KÈM JWT TOKEN
+        // =========================================================
+        private HttpClient GetAuthenticatedClient()
+        {
+            var client = new HttpClient
+            {
+                BaseAddress = new Uri("https://localhost:7163/api/")
+            };
+
+            // Gắn Bearer Token vào Header
+            if (!string.IsNullOrEmpty(SessionManager.JwtToken))
+            {
+                client.DefaultRequestHeaders.Authorization =
+                    new AuthenticationHeaderValue(
+                        "Bearer",
+                        SessionManager.JwtToken);
+            }
+
+            return client;
+        }
+
+        // =========================================================
         // LOAD DATA
         // =========================================================
         private async Task LoadDataAsync()
         {
             try
             {
+                // Tạo HttpClient đã được gắn JWT Token
+                using var client = GetAuthenticatedClient();
+
                 var categories =
-                    await _client.GetFromJsonAsync<List<CategoryDto>>("categories");
+                    await client.GetFromJsonAsync<List<CategoryDto>>("categories");
 
                 dgvCategories.DataSource = categories;
 
@@ -394,10 +423,15 @@ namespace MiniSupermarket.WinForms
             txtCategoryName.Clear();
             txtDescription.Clear();
         }
+
+        private void grpCategoryList_Enter(object sender, EventArgs e)
+        {
+
+        }
     }
 
     // =============================================================
-    // DTO
+    // DTO (Data Transfer Object) cho Category
     // =============================================================
     public class CategoryDto
     {
