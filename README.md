@@ -1,235 +1,192 @@
-# 🛒 HỆ THỐNG QUẢN LÝ SIÊU THỊ MINI (MINISUPERMARKET SYSTEM)
-> **Môn học:** Lập trình Ứng dụng .NET Core (Mã môn: 229162)  
-> **Buổi thực hành:** Buổi 2 - Xác thực JWT, Phân quyền và tích hợp WinForms Client
+# 🛒 HỆ THỐNG QUẢN LÝ SIÊU THỊ MINI
+
+## 📚 Thông tin
+
+- **Môn học:** Lập trình Ứng dụng .NET Core
+- **Mã môn:** 229162
+- **Buổi thực hành:** Buổi 3 - Kết nối SQL Server và Entity Framework Core
+- **Ngôn ngữ:** C#
+- **Framework:** .NET 8
+- **Database:** SQL Server
+- **ORM:** Entity Framework Core
+- **Client:** Windows Forms
 
 ---
 
-## 🏗️ 1. Mô hình Kiến trúc Hệ thống (Client - Server)
+## 🏪 Giới thiệu
 
-Dự án tiếp tục sử dụng mô hình Client - Server, gồm Backend Web API và Frontend WinForms:
+Trong Buổi 3, dự án được nâng cấp từ việc lưu trữ dữ liệu trên RAM sang lưu trữ dữ liệu trên Microsoft SQL Server bằng Entity Framework Core - Code First.
 
-* **`MiniSupermarket.API` (Backend):** Dự án ASP.NET Core Web API chịu trách nhiệm xử lý xác thực JWT, phân quyền người dùng và cung cấp các RESTful API được bảo vệ bằng `[Authorize]`.
-* **`MiniSupermarket.WinForms` (Frontend Client):** Ứng dụng Windows Forms cung cấp giao diện đăng nhập, lưu JWT Token và gọi API kèm `Bearer Token` để truy cập các chức năng được bảo vệ.
+### Đề tài
 
-Luồng hoạt động chính:
+**Xây dựng Hệ thống Quản lý Bán hàng kết hợp Cơ sở dữ liệu Entity Framework Core - Siêu thị Mini Tổng hợp Đời Sống Xanh**
+
+---
+
+## 🏗️ Mô hình Kiến trúc Hệ thống
+
+Hệ thống sử dụng mô hình **Client - Server**:
 
 ```text
-Người dùng
-    │
-    ▼
-FormLogin (WinForms)
-    │  Username + Password
-    ▼
-AuthController (/auth/login)
-    │
-    │  JWT Token + Role
-    ▼
-SessionManager
-    │
-    │  Bearer Token
-    ▼
-FormCategoryManagement
-    │
-    ▼
-CategoriesController
-    │
-    ├── [Authorize]
-    ├── Admin Dashboard
-    └── Staff POS
+┌─────────────────────────┐
+│     WinForms Client     │
+│                         │
+│  FormLogin              │
+│  FormCategoryManagement │
+└────────────┬────────────┘
+             │ HTTP/HTTPS
+             ▼
+┌─────────────────────────┐
+│    ASP.NET Core API     │
+│                         │
+│ Controllers             │
+│ JWT Authentication      │
+│ Entity Framework Core   │
+└────────────┬────────────┘
+             │
+             ▼
+┌─────────────────────────┐
+│       SQL Server        │
+│                         │
+│ SonNguyenMiniSupermarket│
+│ Db                       │
+└─────────────────────────┘
 ```
 
----
+WinForms đóng vai trò **Client**, gửi yêu cầu đến ASP.NET Core Web API.
 
-## 🛠️ 2. Công nghệ Sử dụng
-
-* **Ngôn ngữ:** C# (.NET 8.0)
-* **Backend:** ASP.NET Core Web API, JWT Bearer Authentication, Controllers, `[Authorize]`, Role-based Authorization
-* **Frontend:** Windows Forms (.NET 8.0), `HttpClient`, `System.Net.Http.Json`
-* **Xác thực:** JSON Web Token (JWT)
-* **Quản lý phiên:** `SessionManager`
-* **Công cụ kiểm thử:** Swagger UI
-* **NuGet:** `System.IdentityModel.Tokens.Jwt`, `Microsoft.AspNetCore.Authentication.JwtBearer`
+Web API xử lý yêu cầu và sử dụng **Entity Framework Core** để thao tác với SQL Server.
 
 ---
 
-## 🔐 3. Các chức năng chính của Buổi 2
+## 💻 Công nghệ sử dụng
 
-### 3.1. Đăng nhập và cấp JWT Token
+- C#
+- .NET 8
+- ASP.NET Core Web API
+- Windows Forms
+- Entity Framework Core
+- SQL Server 2022 Express
+- JWT Bearer
+- Swagger
 
-`AuthController` cung cấp API:
+---
+
+## 🗄️ Cơ sở dữ liệu
+
+Đã cài đặt và kết nối SQL Server Express.
+
+- **Server:** `.\SQLEXPRESS`
+- **Database:** `SonNguyenMiniSupermarketDb`
+
+Các bảng chính:
+
+- `Categories`
+- `Products`
+
+Dữ liệu được lưu trữ trực tiếp trên SQL Server thay vì chỉ lưu tạm trên RAM.
+
+---
+
+## 🔧 Entity Framework Core
+
+Đã cài đặt các package:
+
+- `Microsoft.EntityFrameworkCore.SqlServer`
+- `Microsoft.EntityFrameworkCore.Tools`
+- `Microsoft.EntityFrameworkCore.Design`
+
+Đã xây dựng:
+
+- `Category.cs`
+- `Product.cs`
+- `SupermarketDbContext.cs`
+
+Thiết lập quan hệ:
+
+**Category 1 - N Product**
+
+Sử dụng **Code First** và **Migration** để tạo và cập nhật Database.
+
+Các Migration đã thực hiện:
+
+- `InitialCreateDatabase`
+- `UpdateGreenCategories`
+
+---
+
+## 🌱 Dữ liệu nhóm hàng
+
+Đã thêm dữ liệu mẫu phù hợp với đề tài **Siêu thị Mini Tổng hợp Đời Sống Xanh**:
+
+- Thực phẩm hữu cơ
+- Đồ uống thiên nhiên
+- Sản phẩm chăm sóc cá nhân
+- Đồ dùng gia đình xanh
+- Sản phẩm tái chế
+
+---
+
+## 🌐 Categories API
+
+Đã cập nhật `CategoriesController` để làm việc với SQL Server thông qua Entity Framework Core.
+
+Các chức năng:
+
+| Phương thức | Chức năng |
+|---|---|
+| GET | Lấy danh sách nhóm hàng |
+| GET/{id} | Xem nhóm hàng theo ID |
+| GET/search | Tìm kiếm nhóm hàng |
+| POST | Thêm nhóm hàng |
+| PUT | Cập nhật nhóm hàng |
+| DELETE | Xóa nhóm hàng |
+
+### Phân quyền
+
+- **Admin:** Xem, thêm, sửa, xóa
+- **Cashier:** Xem và tìm kiếm
+
+---
+
+## 🖥️ WinForms Client
+
+Đã kết nối WinForms với Web API.
+
+Các Form chính:
+
+- `FormLogin`
+- `FormCategoryManagement`
+
+WinForms có thể lấy và hiển thị dữ liệu nhóm hàng từ SQL Server thông qua API.
+
+API sử dụng:
+
+`https://localhost:7163/api/`
+
+---
+
+## ▶️ Hướng dẫn Chạy và Kiểm thử Dự án
+
+### 1. Khởi động SQL Server
+
+Đảm bảo dịch vụ SQL Server Express đang chạy:
 
 ```text
-POST /api/auth/login
+.\SQLEXPRESS
 ```
 
-Tài khoản kiểm thử:
-
-| Tài khoản | Mật khẩu | Quyền |
-|---|---|---|
-| `admin` | `123456` | Admin |
-| `cashier` | `123456` | Cashier |
-
-Khi đăng nhập thành công, API trả về:
-
-* `success`
-* `token`
-* `role`
-
-JWT Token được lưu vào `SessionManager`.
-
----
-
-### 3.2. Bảo vệ API bằng `[Authorize]`
-
-`CategoriesController` được bảo vệ bằng:
-
-```csharp
-[Authorize]
-```
-
-Do đó người dùng phải đăng nhập và gửi JWT Token hợp lệ mới có thể truy cập các API được bảo vệ.
-
-Nếu gọi API không có Token:
+Database sử dụng:
 
 ```text
-401 Unauthorized
+SonNguyenMiniSupermarketDb
 ```
 
----
+### 2. Chạy ASP.NET Core Web API
 
-### 3.3. Phân quyền Admin và Cashier
+Mở project `MiniSupermarket.API` trong Visual Studio.
 
-Hệ thống có hai API kiểm thử phân quyền:
-
-```text
-GET /api/categories/admin-dashboard
-GET /api/categories/staff-pos
-```
-
-Phân quyền:
-
-```csharp
-[Authorize(Roles = "Admin")]
-```
-
-`admin-dashboard` chỉ cho phép tài khoản có quyền `Admin`.
-
-```csharp
-[Authorize(Roles = "Admin,Cashier")]
-```
-
-`staff-pos` cho phép cả `Admin` và `Cashier`.
-
-Kết quả kiểm thử:
-
-| API | Admin | Cashier |
-|---|---:|---:|
-| `/categories/staff-pos` | 200 OK | 200 OK |
-| `/categories/admin-dashboard` | 200 OK | 403 Forbidden |
-
----
-
-## 🖥️ 4. WinForms Client
-
-### 4.1. FormLogin
-
-`FormLogin` là màn hình đăng nhập của ứng dụng WinForms.
-
-Các thành phần chính:
-
-* `txtUser`: nhập tài khoản.
-* `txtPass`: nhập mật khẩu.
-* `btnLogin`: nút đăng nhập hệ thống.
-* `SessionManager`: lưu JWT Token và quyền hiện tại.
-
-Sau khi đăng nhập thành công:
-
-```text
-FormLogin
-    ↓
-Lưu JwtToken + CurrentRole
-    ↓
-Mở FormCategoryManagement
-```
-
----
-
-### 4.2. SessionManager
-
-`SessionManager` lưu thông tin phiên đăng nhập:
-
-```csharp
-public static class SessionManager
-{
-    public static string JwtToken { get; set; } = string.Empty;
-    public static string CurrentRole { get; set; } = string.Empty;
-}
-```
-
----
-
-### 4.3. Gửi Bearer Token khi gọi API
-
-Trong `FormCategoryManagement`, `HttpClient` được tạo và gắn JWT Token:
-
-```csharp
-client.DefaultRequestHeaders.Authorization =
-    new AuthenticationHeaderValue(
-        "Bearer",
-        SessionManager.JwtToken);
-```
-
-Sau đó WinForms gọi API:
-
-```text
-GET /api/categories
-```
-
-với JWT Token trong HTTP Authorization Header.
-
----
-
-## 📂 5. Cấu trúc Solution
-
-```text
-MiniSupermarketSystem/
-│
-├── MiniSupermarket.API/                 # Dự án Web API (Backend)
-│   ├── Controllers/
-│   │   ├── AuthController.cs            # Đăng nhập và cấp JWT
-│   │   └── CategoriesController.cs      # API danh mục + phân quyền
-│   ├── Models/                          # Các lớp dữ liệu
-│   └── Program.cs                       # Cấu hình JWT Authentication
-│
-└── MiniSupermarket.WinForms/            # Dự án Windows Forms
-    ├── FormLogin.cs                     # Giao diện đăng nhập
-    ├── FormLogin.Designer.cs            # Thiết kế FormLogin
-    ├── FormCategoryManagement.cs        # Quản lý danh mục
-    ├── SessionManager.cs                # Lưu JWT Token và Role
-    └── Program.cs                       # Khởi động FormLogin
-```
-
----
-
-## 🚀 6. Hướng dẫn Chạy và Kiểm thử Dự án
-
-### Bước 1: Chạy Backend Web API
-
-Mở Solution bằng Visual Studio.
-
-Đảm bảo project:
-
-```text
-MiniSupermarket.API
-```
-
-được chạy cùng với WinForms.
-
-API sử dụng địa chỉ:
-
-```text
-https://localhost:7163
-```
+Nhấn **F5** để chạy API.
 
 Swagger:
 
@@ -237,157 +194,115 @@ Swagger:
 https://localhost:7163/swagger/index.html
 ```
 
----
+### 3. Kiểm tra API
 
-### Bước 2: Kiểm thử API không có Token
+Trong Swagger:
 
-Mở Swagger và gọi:
+- Thực hiện đăng nhập để lấy JWT.
+- Sử dụng **Authorize** để nhập token.
+- Kiểm tra API `GET /api/categories`.
+- Kiểm tra API `POST /api/categories`.
+- Kiểm tra các chức năng `PUT` và `DELETE` với tài khoản Admin.
 
-```text
-GET /api/categories
-```
+### 4. Chạy WinForms
 
-khi chưa Authorize.
-
-Kết quả mong đợi:
-
-```text
-401 Unauthorized
-```
-
----
-
-### Bước 3: Kiểm thử đăng nhập trên Swagger
-
-Gọi:
-
-```text
-POST /api/auth/login
-```
-
-với:
-
-```json
-{
-  "username": "admin",
-  "password": "123456"
-}
-```
-
-Hoặc:
-
-```json
-{
-  "username": "cashier",
-  "password": "123456"
-}
-```
-
-API trả về JWT Token và Role.
-
----
-
-### Bước 4: Kiểm thử phân quyền
-
-Trong Swagger chọn **Authorize** và nhập:
-
-```text
-Bearer <JWT_TOKEN>
-```
-
-Sau đó kiểm tra:
-
-```text
-GET /api/categories/staff-pos
-GET /api/categories/admin-dashboard
-```
-
-Đối với tài khoản `cashier`:
-
-```text
-staff-pos           → 200 OK
-admin-dashboard     → 403 Forbidden
-```
-
----
-
-### Bước 5: Chạy WinForms
-
-Chạy:
+Chạy project:
 
 ```text
 MiniSupermarket.WinForms
 ```
 
-Ứng dụng phải mở:
+Đăng nhập bằng tài khoản đã cấu hình ở Buổi 2.
 
-```text
-FormLogin
-```
-
-Đăng nhập bằng:
-
-```text
-Tài khoản: admin
-Mật khẩu: 123456
-```
-
-hoặc:
-
-```text
-Tài khoản: cashier
-Mật khẩu: 123456
-```
-
-Sau khi đăng nhập thành công, hệ thống lưu JWT Token và mở:
+Sau khi đăng nhập, hệ thống mở:
 
 ```text
 FormCategoryManagement
 ```
 
----
+Tại đây có thể xem và quản lý danh sách nhóm hàng thông qua API.
 
-### Bước 6: Kiểm thử gọi API từ WinForms
+### 5. Kiểm tra dữ liệu trên SQL Server
 
-Sau khi đăng nhập thành công, `FormCategoryManagement` gọi:
+Mở **SQL Server Object Explorer** trong Visual Studio.
 
-```text
-GET /api/categories
-```
-
-và gửi:
+Truy cập:
 
 ```text
-Authorization: Bearer <JWT_TOKEN>
+.\SQLEXPRESS
+└── Databases
+    └── SonNguyenMiniSupermarketDb
+        └── Tables
+            └── dbo.Categories
 ```
 
-Nếu Token hợp lệ, danh sách nhóm hàng được tải lên `DataGridView`.
+Kiểm tra dữ liệu sau khi thêm hoặc thay đổi.
+
+### 6. Kiểm tra tính lưu trữ
+
+Dừng Web API và WinForms.
+
+Sau đó chạy lại cả hai chương trình.
+
+Nếu dữ liệu nhóm hàng vẫn còn thì chứng minh dữ liệu đã được lưu trên SQL Server và không còn phụ thuộc vào bộ nhớ RAM.
 
 ---
 
-## 🧪 7. Kết quả Kiểm thử
+## 🧪 Kết quả Kiểm thử
 
-Các trường hợp cần kiểm chứng:
+Đã kiểm tra:
 
-| STT | Nội dung kiểm thử | Kết quả mong đợi |
-|---:|---|---|
-| 1 | Truy cập `/categories` không có Token | `401 Unauthorized` |
-| 2 | Đăng nhập `admin / 123456` | Đăng nhập thành công |
-| 3 | Đăng nhập `cashier / 123456` | Đăng nhập thành công |
-| 4 | Sai tài khoản/mật khẩu | Đăng nhập thất bại |
-| 5 | Admin gọi `staff-pos` | `200 OK` |
-| 6 | Cashier gọi `staff-pos` | `200 OK` |
-| 7 | Admin gọi `admin-dashboard` | `200 OK` |
-| 8 | Cashier gọi `admin-dashboard` | `403 Forbidden` |
-| 9 | WinForms đăng nhập thành công | Mở `FormCategoryManagement` |
-| 10 | WinForms gọi `/categories` có JWT | Hiển thị danh sách danh mục |
+- ✅ API lấy dữ liệu trực tiếp từ SQL Server.
+- ✅ Thêm nhóm hàng bằng Swagger.
+- ✅ Dữ liệu được lưu vào bảng `Categories`.
+- ✅ WinForms hiển thị dữ liệu từ Database.
+- ✅ Dừng và chạy lại API/WinForms, dữ liệu vẫn còn.
+- ✅ Dữ liệu được lưu trữ bền vững trên SQL Server.
 
 ---
 
-## 👨‍💻 8. Tác giả
+## 📁 Cấu trúc chính
 
-**Họ tên sinh viên:** [Nguyễn Vũ Trường Sơn]
+```text
+MiniSupermarket
+├── MiniSupermarket.API
+│   ├── Controllers
+│   ├── Data
+│   ├── Models
+│   ├── Migrations
+│   ├── Program.cs
+│   └── appsettings.json
+│
+├── MiniSupermarket.WinForms
+│   ├── FormLogin.cs
+│   ├── FormCategoryManagement.cs
+│   ├── ApiClientService.cs
+│   └── SessionManager.cs
+│
+└── README.md
+```
 
-**Mã sinh viên:** [2124110109]
+---
 
-**Lớp học phần:** [CCQ2411D]
+## 🎯 Kết quả
+
+Hoàn thành các nội dung chính của Buổi 3:
+
+- ✅ Kết nối ASP.NET Core Web API với SQL Server.
+- ✅ Cài đặt và sử dụng Entity Framework Core.
+- ✅ Xây dựng Entity và DbContext.
+- ✅ Sử dụng Code First và Migration.
+- ✅ Tạo và cập nhật Database.
+- ✅ Quản lý nhóm hàng bằng SQL Server.
+- ✅ Kết nối Categories API với Database.
+- ✅ Kết nối WinForms với API.
+- ✅ Kiểm tra dữ liệu được lưu trữ bền vững.
+
+---
+
+## 👨‍💻 Tác giả
+
+- **Họ tên sinh viên:** Nguyễn Vũ Trường Sơn
+- **Mã sinh viên:** 2124110109
+- **Lớp học phần:** CCQ2411D
+- **Đề tài:** Xây dựng Hệ thống Quản lý Bán hàng kết hợp Cơ sở dữ liệu Entity Framework Core - Siêu thị Mini Tổng hợp Đời Sống Xanh
