@@ -1,61 +1,145 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using MiniSupermarket.API.Data;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+
 namespace MiniSupermarket.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     public class AuthController : ControllerBase
     {
+        // DbContext dùng để truy vấn bảng người dùng
+        private readonly SupermarketDbContext _context;
+
+        // Cấu hình ứng dụng dùng để lấy JWT Secret
         private readonly IConfiguration _configuration;
-        public AuthController(IConfiguration configuration)
+
+        // Khởi tạo Controller
+        public AuthController(
+            SupermarketDbContext context,
+            IConfiguration configuration)
         {
+            _context = context;
             _configuration = configuration;
         }
-        // Endpoint Đăng nhập: POST /api/auth/login
+
+        // ============================================================
+        // ĐĂNG NHẬP
+        // POST /api/auth/login
+        // ============================================================
         [HttpPost("login")]
-        public IActionResult Login([FromBody] LoginRequestDto request)
+        public async Task<IActionResult> Login(
+            [FromBody] LoginRequestDto request)
         {
-            // Kiểm tra tài khoản mẫu (Trong thực tế sẽ truy vấn qua EF Core / SQL Server)
-            if (request.Username == "admin" && request.Password == "123456")
+            // Kiểm tra dữ liệu đầu vào
+            if (string.IsNullOrWhiteSpace(request.Username) ||
+                string.IsNullOrWhiteSpace(request.Password))
             {
-                var token = GenerateJwtToken(request.Username, "Admin");
-                return Ok(new { success = true, token = token, role = "Admin" });
+                return BadRequest(new
+                {
+                    success = false,
+                    message = "Vui lòng nhập tên đăng nhập và mật khẩu!"
+                });
             }
-            else if (request.Username == "cashier" && request.Password == "123456")
+
+            // Tìm người dùng trong SQL Server
+            var nguoiDung = await _context.NguoiDungs
+                .FirstOrDefaultAsync(nd =>
+                    nd.TenDangNhap == request.Username &&
+                    nd.MatKhau == request.Password &&
+                    nd.DangHoatDong == true);
+
+            // Không tìm thấy tài khoản
+            if (nguoiDung == null)
             {
-                var token = GenerateJwtToken(request.Username, "Cashier");
-                return Ok(new { success = true, token = token, role = "Cashier" });
+                return Unauthorized(new
+                {
+                    success = false,
+                    message = "Sai tài khoản hoặc mật khẩu!"
+                });
             }
-            return Unauthorized(new { success = false, message = "Sai tài khoản hoặc mật khẩu!" });
+
+            // Tạo JWT Token
+            var token = GenerateJwtToken(
+                nguoiDung.TenDangNhap,
+                nguoiDung.VaiTro);
+
+            // Trả kết quả đăng nhập
+            return Ok(new
+            {
+                success = true,
+                token = token,
+                role = nguoiDung.VaiTro,
+                username = nguoiDung.TenDangNhap,
+                fullName = nguoiDung.HoTen
+            });
         }
-        private string GenerateJwtToken(string username, string role)
+
+        // ============================================================
+        // TẠO JWT TOKEN
+        // ============================================================
+        private string GenerateJwtToken(
+            string username,
+            string role)
         {
-            var tokenHandler = new JwtSecurityTokenHandler();
+            var tokenHandler =
+                new JwtSecurityTokenHandler();
+
             // Lấy khóa bí mật từ appsettings.json
-            var key = Encoding.ASCII.GetBytes(_configuration["JwtSettings:Secret"] ??
-           "SupermarketSecretKeyDoAnMonHoc2026SecureString!!");
+            var key = Encoding.ASCII.GetBytes(
+                _configuration["JwtSettings:Secret"] ??
+                "SupermarketSecretKeyDoAnMonHoc2026SecureString!!");
 
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(new[] {
- new Claim(ClaimTypes.Name, username),
- new Claim(ClaimTypes.Role, role)
- }),
-                Expires = DateTime.UtcNow.AddHours(2), // Thời hạn token là 2 tiếng
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key),
-           SecurityAlgorithms.HmacSha256Signature)
-            };
+            // Cấu hình thông tin Token
+            var tokenDescriptor =
+                new SecurityTokenDescriptor
+                {
+                    Subject = new ClaimsIdentity(
+                        new[]
+                        {
+                            new Claim(
+                                ClaimTypes.Name,
+                                username),
 
-            var token = tokenHandler.CreateToken(tokenDescriptor);
+                            new Claim(
+                                ClaimTypes.Role,
+                                role)
+                        }),
+
+                    // Token có thời hạn 2 tiếng
+                    Expires = DateTime.UtcNow.AddHours(2),
+
+                    // Khóa ký JWT
+                    SigningCredentials =
+                        new SigningCredentials(
+                            new SymmetricSecurityKey(key),
+                            SecurityAlgorithms.HmacSha256Signature)
+                };
+
+            // Tạo Token
+            var token =
+                tokenHandler.CreateToken(tokenDescriptor);
+
+            // Chuyển Token thành chuỗi
             return tokenHandler.WriteToken(token);
         }
     }
+
+    // ================================================================
+    // DTO DÙNG CHO CHỨC NĂNG ĐĂNG NHẬP
+    // ================================================================
     public class LoginRequestDto
     {
-        public string Username { get; set; } = string.Empty;
-        public string Password { get; set; } = string.Empty;
+        // Tên đăng nhập
+        public string Username { get; set; } =
+            string.Empty;
+
+        // Mật khẩu
+        public string Password { get; set; } =
+            string.Empty;
     }
 }

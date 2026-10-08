@@ -3,38 +3,38 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MiniSupermarket.API.Models
 {
-    // Model đại diện cho bảng tài khoản người dùng
-    [Table("Users")]
-    public class User
+    // Model đại diện cho bảng người dùng
+    [Table("NguoiDung")]
+    public class NguoiDung
     {
-        // Khóa chính của người dùng
+        // Mã người dùng - Khóa chính
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int UserId { get; set; }
+        public int MaNguoiDung { get; set; }
 
         // Tên đăng nhập
         [Required(ErrorMessage = "Tên đăng nhập không được để trống")]
         [StringLength(50)]
-        public string Username { get; set; } = string.Empty;
+        public string TenDangNhap { get; set; } = string.Empty;
 
         // Mật khẩu
         [Required(ErrorMessage = "Mật khẩu không được để trống")]
         [StringLength(255)]
-        public string Password { get; set; } = string.Empty;
+        public string MatKhau { get; set; } = string.Empty;
 
         // Họ tên người dùng
         [StringLength(100)]
-        public string? FullName { get; set; }
+        public string? HoTen { get; set; }
 
         // Vai trò: Admin hoặc Cashier
         [Required]
         [StringLength(50)]
-        public string Role { get; set; } = "Cashier";
+        public string VaiTro { get; set; } = "Cashier";
 
         // Trạng thái hoạt động của tài khoản
-        public bool IsActive { get; set; } = true;
+        public bool DangHoatDong { get; set; } = true;
 
         // Danh sách đơn hàng do người dùng lập
-        public virtual ICollection<Order>? Orders { get; set; }
+        public virtual ICollection<DonHang>? DonHangs { get; set; }
     }
 }

@@ -4,32 +4,36 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace MiniSupermarket.API.Models
 {
     // Model đại diện cho bảng khách hàng
-    [Table("Customers")]
-    public class Customer
+    [Table("KhachHang")]
+    public class KhachHang
     {
-        // Khóa chính của khách hàng
+        // Mã khách hàng - Khóa chính
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int CustomerId { get; set; }
+        public int MaKhachHang { get; set; }
 
         // Họ và tên khách hàng
         [Required(ErrorMessage = "Họ tên khách hàng không được để trống")]
         [StringLength(100)]
-        public string FullName { get; set; } = string.Empty;
+        public string HoTen { get; set; } = string.Empty;
 
         // Số điện thoại khách hàng
-        [StringLength(20)]
-        public string? PhoneNumber { get; set; }
+        [Required(ErrorMessage = "Số điện thoại không được để trống")]
+        [StringLength(15)]
+        public string SoDienThoai { get; set; } = string.Empty;
 
         // Email khách hàng
         [StringLength(100)]
         public string? Email { get; set; }
 
-        // Địa chỉ khách hàng
-        [StringLength(255)]
-        public string? Address { get; set; }
+        // Địa chỉ chi tiết của khách hàng
+        // Bao gồm số nhà, đường, phường/xã,
+        // quận/huyện, thành phố/tỉnh
+        [Required(ErrorMessage = "Địa chỉ không được để trống")]
+        [StringLength(500)]
+        public string DiaChi { get; set; } = string.Empty;
 
         // Danh sách đơn hàng của khách hàng
-        public virtual ICollection<Order>? Orders { get; set; }
+        public virtual ICollection<DonHang>? DonHangs { get; set; }
     }
 }

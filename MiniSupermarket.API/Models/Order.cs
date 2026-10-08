@@ -4,40 +4,40 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace MiniSupermarket.API.Models
 {
     // Model đại diện cho bảng đơn hàng
-    [Table("Orders")]
-    public class Order
+    [Table("DonHang")]
+    public class DonHang
     {
-        // Khóa chính của đơn hàng
+        // Mã đơn hàng - Khóa chính
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int OrderId { get; set; }
+        public int MaDonHang { get; set; }
 
-        // Mã khách hàng
-        public int CustomerId { get; set; }
+        // Mã khách hàng - Khóa ngoại
+        public int MaKhachHang { get; set; }
 
         // Khách hàng thực hiện đơn hàng
-        [ForeignKey("CustomerId")]
-        public virtual Customer? Customer { get; set; }
+        [ForeignKey("MaKhachHang")]
+        public virtual KhachHang? KhachHang { get; set; }
 
-        // Mã người dùng lập đơn
-        public int UserId { get; set; }
+        // Mã người dùng lập đơn - Khóa ngoại
+        public int MaNguoiDung { get; set; }
 
         // Người dùng lập đơn hàng
-        [ForeignKey("UserId")]
-        public virtual User? User { get; set; }
+        [ForeignKey("MaNguoiDung")]
+        public virtual NguoiDung? NguoiDung { get; set; }
 
         // Ngày tạo đơn hàng
-        public DateTime OrderDate { get; set; } = DateTime.Now;
+        public DateTime NgayDatHang { get; set; } = DateTime.Now;
 
         // Tổng tiền đơn hàng
         [Column(TypeName = "decimal(18,2)")]
-        public decimal TotalAmount { get; set; }
+        public decimal TongTien { get; set; }
 
         // Trạng thái đơn hàng
         [StringLength(50)]
-        public string Status { get; set; } = "Pending";
+        public string TrangThai { get; set; } = "Pending";
 
-        // Danh sách sản phẩm trong đơn hàng
-        public virtual ICollection<OrderDetail>? OrderDetails { get; set; }
+        // Danh sách chi tiết đơn hàng
+        public virtual ICollection<ChiTietDonHang>? ChiTietDonHangs { get; set; }
     }
 }

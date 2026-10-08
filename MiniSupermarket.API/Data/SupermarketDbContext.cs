@@ -17,23 +17,23 @@ namespace MiniSupermarket.API.Data
         // KHAI BÁO CÁC BẢNG DỮ LIỆU
         // ============================================================
 
-        // Bảng danh mục
-        public DbSet<Category> Categories { get; set; }
+        // Bảng nhóm hàng
+        public DbSet<NhomHang> NhomHangs { get; set; }
 
         // Bảng sản phẩm
-        public DbSet<Product> Products { get; set; }
+        public DbSet<SanPham> SanPhams { get; set; }
 
         // Bảng khách hàng
-        public DbSet<Customer> Customers { get; set; }
+        public DbSet<KhachHang> KhachHangs { get; set; }
 
         // Bảng đơn hàng
-        public DbSet<Order> Orders { get; set; }
+        public DbSet<DonHang> DonHangs { get; set; }
 
         // Bảng chi tiết đơn hàng
-        public DbSet<OrderDetail> OrderDetails { get; set; }
+        public DbSet<ChiTietDonHang> ChiTietDonHangs { get; set; }
 
         // Bảng người dùng
-        public DbSet<User> Users { get; set; }
+        public DbSet<NguoiDung> NguoiDungs { get; set; }
 
 
         // ============================================================
@@ -47,438 +47,438 @@ namespace MiniSupermarket.API.Data
 
 
             // ========================================================
-            // 1. SEED 15 DANH MỤC
+            // 1. SEED 15 NHÓM HÀNG
             // ========================================================
 
-            modelBuilder.Entity<Category>().HasData(
+            modelBuilder.Entity<NhomHang>().HasData(
 
-                new Category
+                new NhomHang
                 {
-                    CategoryId = 1,
-                    CategoryName = "Thực phẩm hữu cơ",
-                    Description = "Các sản phẩm thực phẩm hữu cơ, tự nhiên"
+                    MaNhomHang = 1,
+                    TenNhomHang = "Thực phẩm hữu cơ",
+                    MoTa = "Các sản phẩm thực phẩm hữu cơ, tự nhiên"
                 },
 
-                new Category
+                new NhomHang
                 {
-                    CategoryId = 2,
-                    CategoryName = "Đồ uống thiên nhiên",
-                    Description = "Nước uống, trà và các sản phẩm có nguồn gốc tự nhiên"
+                    MaNhomHang = 2,
+                    TenNhomHang = "Đồ uống thiên nhiên",
+                    MoTa = "Nước uống, trà và các sản phẩm có nguồn gốc tự nhiên"
                 },
 
-                new Category
+                new NhomHang
                 {
-                    CategoryId = 3,
-                    CategoryName = "Sản phẩm chăm sóc cá nhân",
-                    Description = "Các sản phẩm chăm sóc cá nhân thân thiện với môi trường"
+                    MaNhomHang = 3,
+                    TenNhomHang = "Sản phẩm chăm sóc cá nhân",
+                    MoTa = "Các sản phẩm chăm sóc cá nhân thân thiện với môi trường"
                 },
 
-                new Category
+                new NhomHang
                 {
-                    CategoryId = 4,
-                    CategoryName = "Đồ dùng gia đình xanh",
-                    Description = "Đồ dùng gia đình có thể tái sử dụng"
+                    MaNhomHang = 4,
+                    TenNhomHang = "Đồ dùng gia đình xanh",
+                    MoTa = "Đồ dùng gia đình có thể tái sử dụng"
                 },
 
-                new Category
+                new NhomHang
                 {
-                    CategoryId = 5,
-                    CategoryName = "Sản phẩm tái chế",
-                    Description = "Các sản phẩm được làm từ vật liệu tái chế"
+                    MaNhomHang = 5,
+                    TenNhomHang = "Sản phẩm tái chế",
+                    MoTa = "Các sản phẩm được làm từ vật liệu tái chế"
                 },
 
-                new Category
+                new NhomHang
                 {
-                    CategoryId = 6,
-                    CategoryName = "Rau củ hữu cơ",
-                    Description = "Các loại rau củ được trồng theo phương pháp hữu cơ"
+                    MaNhomHang = 6,
+                    TenNhomHang = "Rau củ hữu cơ",
+                    MoTa = "Các loại rau củ được trồng theo phương pháp hữu cơ"
                 },
 
-                new Category
+                new NhomHang
                 {
-                    CategoryId = 7,
-                    CategoryName = "Trái cây hữu cơ",
-                    Description = "Các loại trái cây sạch và tự nhiên"
+                    MaNhomHang = 7,
+                    TenNhomHang = "Trái cây hữu cơ",
+                    MoTa = "Các loại trái cây sạch và tự nhiên"
                 },
 
-                new Category
+                new NhomHang
                 {
-                    CategoryId = 8,
-                    CategoryName = "Ngũ cốc",
-                    Description = "Các loại ngũ cốc và hạt dinh dưỡng"
+                    MaNhomHang = 8,
+                    TenNhomHang = "Ngũ cốc",
+                    MoTa = "Các loại ngũ cốc và hạt dinh dưỡng"
                 },
 
-                new Category
+                new NhomHang
                 {
-                    CategoryId = 9,
-                    CategoryName = "Thực phẩm khô",
-                    Description = "Các loại thực phẩm khô tiện dụng"
+                    MaNhomHang = 9,
+                    TenNhomHang = "Thực phẩm khô",
+                    MoTa = "Các loại thực phẩm khô tiện dụng"
                 },
 
-                new Category
+                new NhomHang
                 {
-                    CategoryId = 10,
-                    CategoryName = "Gia vị tự nhiên",
-                    Description = "Các loại gia vị có nguồn gốc tự nhiên"
+                    MaNhomHang = 10,
+                    TenNhomHang = "Gia vị tự nhiên",
+                    MoTa = "Các loại gia vị có nguồn gốc tự nhiên"
                 },
 
-                new Category
+                new NhomHang
                 {
-                    CategoryId = 11,
-                    CategoryName = "Đồ dùng nhà bếp",
-                    Description = "Các sản phẩm sử dụng trong nhà bếp"
+                    MaNhomHang = 11,
+                    TenNhomHang = "Đồ dùng nhà bếp",
+                    MoTa = "Các sản phẩm sử dụng trong nhà bếp"
                 },
 
-                new Category
+                new NhomHang
                 {
-                    CategoryId = 12,
-                    CategoryName = "Đồ dùng cá nhân",
-                    Description = "Các sản phẩm phục vụ nhu cầu cá nhân"
+                    MaNhomHang = 12,
+                    TenNhomHang = "Đồ dùng cá nhân",
+                    MoTa = "Các sản phẩm phục vụ nhu cầu cá nhân"
                 },
 
-                new Category
+                new NhomHang
                 {
-                    CategoryId = 13,
-                    CategoryName = "Văn phòng phẩm xanh",
-                    Description = "Văn phòng phẩm thân thiện với môi trường"
+                    MaNhomHang = 13,
+                    TenNhomHang = "Văn phòng phẩm xanh",
+                    MoTa = "Văn phòng phẩm thân thiện với môi trường"
                 },
 
-                new Category
+                new NhomHang
                 {
-                    CategoryId = 14,
-                    CategoryName = "Sản phẩm vệ sinh",
-                    Description = "Các sản phẩm vệ sinh an toàn"
+                    MaNhomHang = 14,
+                    TenNhomHang = "Sản phẩm vệ sinh",
+                    MoTa = "Các sản phẩm vệ sinh an toàn"
                 },
 
-                new Category
+                new NhomHang
                 {
-                    CategoryId = 15,
-                    CategoryName = "Sản phẩm thân thiện môi trường",
-                    Description = "Các sản phẩm góp phần bảo vệ môi trường"
+                    MaNhomHang = 15,
+                    TenNhomHang = "Sản phẩm thân thiện môi trường",
+                    MoTa = "Các sản phẩm góp phần bảo vệ môi trường"
                 }
             );
 
 
             // ========================================================
             // 2. SEED 30 SẢN PHẨM
-            // Mỗi danh mục có 2 sản phẩm
+            // Mỗi nhóm hàng có 2 sản phẩm
             // ========================================================
 
-            modelBuilder.Entity<Product>().HasData(
+            modelBuilder.Entity<SanPham>().HasData(
 
-                // Category 1
-                new Product
+                // Nhóm hàng 1
+                new SanPham
                 {
-                    ProductId = 1,
-                    Barcode = "893000000001",
-                    ProductName = "Gạo lứt hữu cơ",
-                    Price = 85000,
-                    StockQuantity = 50,
-                    CategoryId = 1
+                    MaSanPham = 1,
+                    MaVach = "893000000001",
+                    TenSanPham = "Gạo lứt hữu cơ",
+                    GiaBan = 85000,
+                    SoLuongTon = 50,
+                    MaNhomHang = 1
                 },
 
-                new Product
+                new SanPham
                 {
-                    ProductId = 2,
-                    Barcode = "893000000002",
-                    ProductName = "Mật ong nguyên chất",
-                    Price = 120000,
-                    StockQuantity = 30,
-                    CategoryId = 1
+                    MaSanPham = 2,
+                    MaVach = "893000000002",
+                    TenSanPham = "Mật ong nguyên chất",
+                    GiaBan = 120000,
+                    SoLuongTon = 30,
+                    MaNhomHang = 1
                 },
 
-                // Category 2
-                new Product
+                // Nhóm hàng 2
+                new SanPham
                 {
-                    ProductId = 3,
-                    Barcode = "893000000003",
-                    ProductName = "Nước ép cam nguyên chất",
-                    Price = 35000,
-                    StockQuantity = 60,
-                    CategoryId = 2
+                    MaSanPham = 3,
+                    MaVach = "893000000003",
+                    TenSanPham = "Nước ép cam nguyên chất",
+                    GiaBan = 35000,
+                    SoLuongTon = 60,
+                    MaNhomHang = 2
                 },
 
-                new Product
+                new SanPham
                 {
-                    ProductId = 4,
-                    Barcode = "893000000004",
-                    ProductName = "Trà xanh thiên nhiên",
-                    Price = 45000,
-                    StockQuantity = 45,
-                    CategoryId = 2
+                    MaSanPham = 4,
+                    MaVach = "893000000004",
+                    TenSanPham = "Trà xanh thiên nhiên",
+                    GiaBan = 45000,
+                    SoLuongTon = 45,
+                    MaNhomHang = 2
                 },
 
-                // Category 3
-                new Product
+                // Nhóm hàng 3
+                new SanPham
                 {
-                    ProductId = 5,
-                    Barcode = "893000000005",
-                    ProductName = "Xà phòng thiên nhiên",
-                    Price = 55000,
-                    StockQuantity = 35,
-                    CategoryId = 3
+                    MaSanPham = 5,
+                    MaVach = "893000000005",
+                    TenSanPham = "Xà phòng thiên nhiên",
+                    GiaBan = 55000,
+                    SoLuongTon = 35,
+                    MaNhomHang = 3
                 },
 
-                new Product
+                new SanPham
                 {
-                    ProductId = 6,
-                    Barcode = "893000000006",
-                    ProductName = "Dầu gội thảo mộc",
-                    Price = 110000,
-                    StockQuantity = 25,
-                    CategoryId = 3
+                    MaSanPham = 6,
+                    MaVach = "893000000006",
+                    TenSanPham = "Dầu gội thảo mộc",
+                    GiaBan = 110000,
+                    SoLuongTon = 25,
+                    MaNhomHang = 3
                 },
 
-                // Category 4
-                new Product
+                // Nhóm hàng 4
+                new SanPham
                 {
-                    ProductId = 7,
-                    Barcode = "893000000007",
-                    ProductName = "Túi vải tái sử dụng",
-                    Price = 45000,
-                    StockQuantity = 70,
-                    CategoryId = 4
+                    MaSanPham = 7,
+                    MaVach = "893000000007",
+                    TenSanPham = "Túi vải tái sử dụng",
+                    GiaBan = 45000,
+                    SoLuongTon = 70,
+                    MaNhomHang = 4
                 },
 
-                new Product
+                new SanPham
                 {
-                    ProductId = 8,
-                    Barcode = "893000000008",
-                    ProductName = "Ống hút tre",
-                    Price = 25000,
-                    StockQuantity = 80,
-                    CategoryId = 4
+                    MaSanPham = 8,
+                    MaVach = "893000000008",
+                    TenSanPham = "Ống hút tre",
+                    GiaBan = 25000,
+                    SoLuongTon = 80,
+                    MaNhomHang = 4
                 },
 
-                // Category 5
-                new Product
+                // Nhóm hàng 5
+                new SanPham
                 {
-                    ProductId = 9,
-                    Barcode = "893000000009",
-                    ProductName = "Sổ tay giấy tái chế",
-                    Price = 35000,
-                    StockQuantity = 50,
-                    CategoryId = 5
+                    MaSanPham = 9,
+                    MaVach = "893000000009",
+                    TenSanPham = "Sổ tay giấy tái chế",
+                    GiaBan = 35000,
+                    SoLuongTon = 50,
+                    MaNhomHang = 5
                 },
 
-                new Product
+                new SanPham
                 {
-                    ProductId = 10,
-                    Barcode = "893000000010",
-                    ProductName = "Chậu cây nhựa tái chế",
-                    Price = 75000,
-                    StockQuantity = 25,
-                    CategoryId = 5
+                    MaSanPham = 10,
+                    MaVach = "893000000010",
+                    TenSanPham = "Chậu cây nhựa tái chế",
+                    GiaBan = 75000,
+                    SoLuongTon = 25,
+                    MaNhomHang = 5
                 },
 
-                // Category 6
-                new Product
+                // Nhóm hàng 6
+                new SanPham
                 {
-                    ProductId = 11,
-                    Barcode = "893000000011",
-                    ProductName = "Cải xanh hữu cơ",
-                    Price = 30000,
-                    StockQuantity = 40,
-                    CategoryId = 6
+                    MaSanPham = 11,
+                    MaVach = "893000000011",
+                    TenSanPham = "Cải xanh hữu cơ",
+                    GiaBan = 30000,
+                    SoLuongTon = 40,
+                    MaNhomHang = 6
                 },
 
-                new Product
+                new SanPham
                 {
-                    ProductId = 12,
-                    Barcode = "893000000012",
-                    ProductName = "Cà rốt hữu cơ",
-                    Price = 28000,
-                    StockQuantity = 45,
-                    CategoryId = 6
+                    MaSanPham = 12,
+                    MaVach = "893000000012",
+                    TenSanPham = "Cà rốt hữu cơ",
+                    GiaBan = 28000,
+                    SoLuongTon = 45,
+                    MaNhomHang = 6
                 },
 
-                // Category 7
-                new Product
+                // Nhóm hàng 7
+                new SanPham
                 {
-                    ProductId = 13,
-                    Barcode = "893000000013",
-                    ProductName = "Táo hữu cơ",
-                    Price = 65000,
-                    StockQuantity = 35,
-                    CategoryId = 7
+                    MaSanPham = 13,
+                    MaVach = "893000000013",
+                    TenSanPham = "Táo hữu cơ",
+                    GiaBan = 65000,
+                    SoLuongTon = 35,
+                    MaNhomHang = 7
                 },
 
-                new Product
+                new SanPham
                 {
-                    ProductId = 14,
-                    Barcode = "893000000014",
-                    ProductName = "Chuối hữu cơ",
-                    Price = 40000,
-                    StockQuantity = 50,
-                    CategoryId = 7
+                    MaSanPham = 14,
+                    MaVach = "893000000014",
+                    TenSanPham = "Chuối hữu cơ",
+                    GiaBan = 40000,
+                    SoLuongTon = 50,
+                    MaNhomHang = 7
                 },
 
-                // Category 8
-                new Product
+                // Nhóm hàng 8
+                new SanPham
                 {
-                    ProductId = 15,
-                    Barcode = "893000000015",
-                    ProductName = "Yến mạch nguyên hạt",
-                    Price = 90000,
-                    StockQuantity = 30,
-                    CategoryId = 8
+                    MaSanPham = 15,
+                    MaVach = "893000000015",
+                    TenSanPham = "Yến mạch nguyên hạt",
+                    GiaBan = 90000,
+                    SoLuongTon = 30,
+                    MaNhomHang = 8
                 },
 
-                new Product
+                new SanPham
                 {
-                    ProductId = 16,
-                    Barcode = "893000000016",
-                    ProductName = "Hạt chia",
-                    Price = 75000,
-                    StockQuantity = 35,
-                    CategoryId = 8
+                    MaSanPham = 16,
+                    MaVach = "893000000016",
+                    TenSanPham = "Hạt chia",
+                    GiaBan = 75000,
+                    SoLuongTon = 35,
+                    MaNhomHang = 8
                 },
 
-                // Category 9
-                new Product
+                // Nhóm hàng 9
+                new SanPham
                 {
-                    ProductId = 17,
-                    Barcode = "893000000017",
-                    ProductName = "Nấm hương khô",
-                    Price = 95000,
-                    StockQuantity = 25,
-                    CategoryId = 9
+                    MaSanPham = 17,
+                    MaVach = "893000000017",
+                    TenSanPham = "Nấm hương khô",
+                    GiaBan = 95000,
+                    SoLuongTon = 25,
+                    MaNhomHang = 9
                 },
 
-                new Product
+                new SanPham
                 {
-                    ProductId = 18,
-                    Barcode = "893000000018",
-                    ProductName = "Mộc nhĩ khô",
-                    Price = 70000,
-                    StockQuantity = 30,
-                    CategoryId = 9
+                    MaSanPham = 18,
+                    MaVach = "893000000018",
+                    TenSanPham = "Mộc nhĩ khô",
+                    GiaBan = 70000,
+                    SoLuongTon = 30,
+                    MaNhomHang = 9
                 },
 
-                // Category 10
-                new Product
+                // Nhóm hàng 10
+                new SanPham
                 {
-                    ProductId = 19,
-                    Barcode = "893000000019",
-                    ProductName = "Muối biển tự nhiên",
-                    Price = 20000,
-                    StockQuantity = 60,
-                    CategoryId = 10
+                    MaSanPham = 19,
+                    MaVach = "893000000019",
+                    TenSanPham = "Muối biển tự nhiên",
+                    GiaBan = 20000,
+                    SoLuongTon = 60,
+                    MaNhomHang = 10
                 },
 
-                new Product
+                new SanPham
                 {
-                    ProductId = 20,
-                    Barcode = "893000000020",
-                    ProductName = "Tiêu đen hữu cơ",
-                    Price = 45000,
-                    StockQuantity = 50,
-                    CategoryId = 10
+                    MaSanPham = 20,
+                    MaVach = "893000000020",
+                    TenSanPham = "Tiêu đen hữu cơ",
+                    GiaBan = 45000,
+                    SoLuongTon = 50,
+                    MaNhomHang = 10
                 },
 
-                // Category 11
-                new Product
+                // Nhóm hàng 11
+                new SanPham
                 {
-                    ProductId = 21,
-                    Barcode = "893000000021",
-                    ProductName = "Hộp đựng thực phẩm thủy tinh",
-                    Price = 95000,
-                    StockQuantity = 30,
-                    CategoryId = 11
+                    MaSanPham = 21,
+                    MaVach = "893000000021",
+                    TenSanPham = "Hộp đựng thực phẩm thủy tinh",
+                    GiaBan = 95000,
+                    SoLuongTon = 30,
+                    MaNhomHang = 11
                 },
 
-                new Product
+                new SanPham
                 {
-                    ProductId = 22,
-                    Barcode = "893000000022",
-                    ProductName = "Muỗng tre",
-                    Price = 25000,
-                    StockQuantity = 70,
-                    CategoryId = 11
+                    MaSanPham = 22,
+                    MaVach = "893000000022",
+                    TenSanPham = "Muỗng tre",
+                    GiaBan = 25000,
+                    SoLuongTon = 70,
+                    MaNhomHang = 11
                 },
 
-                // Category 12
-                new Product
+                // Nhóm hàng 12
+                new SanPham
                 {
-                    ProductId = 23,
-                    Barcode = "893000000023",
-                    ProductName = "Khăn tay cotton",
-                    Price = 40000,
-                    StockQuantity = 45,
-                    CategoryId = 12
+                    MaSanPham = 23,
+                    MaVach = "893000000023",
+                    TenSanPham = "Khăn tay cotton",
+                    GiaBan = 40000,
+                    SoLuongTon = 45,
+                    MaNhomHang = 12
                 },
 
-                new Product
+                new SanPham
                 {
-                    ProductId = 24,
-                    Barcode = "893000000024",
-                    ProductName = "Bình nước cá nhân",
-                    Price = 85000,
-                    StockQuantity = 40,
-                    CategoryId = 12
+                    MaSanPham = 24,
+                    MaVach = "893000000024",
+                    TenSanPham = "Bình nước cá nhân",
+                    GiaBan = 85000,
+                    SoLuongTon = 40,
+                    MaNhomHang = 12
                 },
 
-                // Category 13
-                new Product
+                // Nhóm hàng 13
+                new SanPham
                 {
-                    ProductId = 25,
-                    Barcode = "893000000025",
-                    ProductName = "Sổ tay tái chế",
-                    Price = 35000,
-                    StockQuantity = 50,
-                    CategoryId = 13
+                    MaSanPham = 25,
+                    MaVach = "893000000025",
+                    TenSanPham = "Sổ tay tái chế",
+                    GiaBan = 35000,
+                    SoLuongTon = 50,
+                    MaNhomHang = 13
                 },
 
-                new Product
+                new SanPham
                 {
-                    ProductId = 26,
-                    Barcode = "893000000026",
-                    ProductName = "Bút thân thiện môi trường",
-                    Price = 15000,
-                    StockQuantity = 80,
-                    CategoryId = 13
+                    MaSanPham = 26,
+                    MaVach = "893000000026",
+                    TenSanPham = "Bút thân thiện môi trường",
+                    GiaBan = 15000,
+                    SoLuongTon = 80,
+                    MaNhomHang = 13
                 },
 
-                // Category 14
-                new Product
+                // Nhóm hàng 14
+                new SanPham
                 {
-                    ProductId = 27,
-                    Barcode = "893000000027",
-                    ProductName = "Nước lau sàn sinh học",
-                    Price = 65000,
-                    StockQuantity = 35,
-                    CategoryId = 14
+                    MaSanPham = 27,
+                    MaVach = "893000000027",
+                    TenSanPham = "Nước lau sàn sinh học",
+                    GiaBan = 65000,
+                    SoLuongTon = 35,
+                    MaNhomHang = 14
                 },
 
-                new Product
+                new SanPham
                 {
-                    ProductId = 28,
-                    Barcode = "893000000028",
-                    ProductName = "Nước rửa chén sinh học",
-                    Price = 60000,
-                    StockQuantity = 40,
-                    CategoryId = 14
+                    MaSanPham = 28,
+                    MaVach = "893000000028",
+                    TenSanPham = "Nước rửa chén sinh học",
+                    GiaBan = 60000,
+                    SoLuongTon = 40,
+                    MaNhomHang = 14
                 },
 
-                // Category 15
-                new Product
+                // Nhóm hàng 15
+                new SanPham
                 {
-                    ProductId = 29,
-                    Barcode = "893000000029",
-                    ProductName = "Túi giấy thân thiện môi trường",
-                    Price = 15000,
-                    StockQuantity = 100,
-                    CategoryId = 15
+                    MaSanPham = 29,
+                    MaVach = "893000000029",
+                    TenSanPham = "Túi giấy thân thiện môi trường",
+                    GiaBan = 15000,
+                    SoLuongTon = 100,
+                    MaNhomHang = 15
                 },
 
-                new Product
+                new SanPham
                 {
-                    ProductId = 30,
-                    Barcode = "893000000030",
-                    ProductName = "Bình giữ nhiệt inox",
-                    Price = 180000,
-                    StockQuantity = 25,
-                    CategoryId = 15
+                    MaSanPham = 30,
+                    MaVach = "893000000030",
+                    TenSanPham = "Bình giữ nhiệt inox",
+                    GiaBan = 180000,
+                    SoLuongTon = 25,
+                    MaNhomHang = 15
                 }
             );
 
@@ -487,179 +487,179 @@ namespace MiniSupermarket.API.Data
             // 3. SEED 15 KHÁCH HÀNG
             // ========================================================
 
-            modelBuilder.Entity<Customer>().HasData(
+            modelBuilder.Entity<KhachHang>().HasData(
 
-                new Customer
+                new KhachHang
                 {
-                    CustomerId = 1,
-                    FullName = "Nguyễn Văn An",
-                    PhoneNumber = "0900000001",
+                    MaKhachHang = 1,
+                    HoTen = "Nguyễn Văn An",
+                    SoDienThoai = "0900000001",
                     Email = "nguyenvanan@gmail.com",
-                    Address = "TP. Hồ Chí Minh"
+                    DiaChi = "25, đường Nguyễn Văn Cừ, phường Nguyễn Cư Trinh, quận 1, Thành phố Hồ Chí Minh"
                 },
 
-                new Customer
+                new KhachHang
                 {
-                    CustomerId = 2,
-                    FullName = "Trần Thị Bình",
-                    PhoneNumber = "0900000002",
+                    MaKhachHang = 2,
+                    HoTen = "Trần Thị Bình",
+                    SoDienThoai = "0900000002",
                     Email = "tranthibinh@gmail.com",
-                    Address = "TP. Hồ Chí Minh"
+                    DiaChi = "18, đường Lê Lợi, phường Bến Nghé, quận 1, Thành phố Hồ Chí Minh"
                 },
 
-                new Customer
+                new KhachHang
                 {
-                    CustomerId = 3,
-                    FullName = "Lê Văn Cường",
-                    PhoneNumber = "0900000003",
+                    MaKhachHang = 3,
+                    HoTen = "Lê Văn Cường",
+                    SoDienThoai = "0900000003",
                     Email = "levancuong@gmail.com",
-                    Address = "Bình Dương"
+                    DiaChi = "42, đường Phạm Văn Đồng, phường Hiệp Bình Chánh, thành phố Thủ Đức, Thành phố Hồ Chí Minh"
                 },
 
-                new Customer
+                new KhachHang
                 {
-                    CustomerId = 4,
-                    FullName = "Phạm Thị Dung",
-                    PhoneNumber = "0900000004",
+                    MaKhachHang = 4,
+                    HoTen = "Phạm Thị Dung",
+                    SoDienThoai = "0900000004",
                     Email = "phamthidung@gmail.com",
-                    Address = "Đồng Nai"
+                    DiaChi = "76, đường Đồng Khởi, phường Bến Nghé, quận 1, Thành phố Hồ Chí Minh"
                 },
 
-                new Customer
+                new KhachHang
                 {
-                    CustomerId = 5,
-                    FullName = "Hoàng Văn Minh",
-                    PhoneNumber = "0900000005",
+                    MaKhachHang = 5,
+                    HoTen = "Hoàng Văn Minh",
+                    SoDienThoai = "0900000005",
                     Email = "hoangvanminh@gmail.com",
-                    Address = "TP. Hồ Chí Minh"
+                    DiaChi = "12, đường Nguyễn Trãi, phường Bến Thành, quận 1, Thành phố Hồ Chí Minh"
                 },
 
-                new Customer
+                new KhachHang
                 {
-                    CustomerId = 6,
-                    FullName = "Nguyễn Thị Lan",
-                    PhoneNumber = "0900000006",
+                    MaKhachHang = 6,
+                    HoTen = "Nguyễn Thị Lan",
+                    SoDienThoai = "0900000006",
                     Email = "nguyenthilan@gmail.com",
-                    Address = "Long An"
+                    DiaChi = "35, đường Nguyễn Huệ, phường Bến Nghé, quận 1, Thành phố Hồ Chí Minh"
                 },
 
-                new Customer
+                new KhachHang
                 {
-                    CustomerId = 7,
-                    FullName = "Trần Văn Hùng",
-                    PhoneNumber = "0900000007",
+                    MaKhachHang = 7,
+                    HoTen = "Trần Văn Hùng",
+                    SoDienThoai = "0900000007",
                     Email = "tranvanhung@gmail.com",
-                    Address = "TP. Hồ Chí Minh"
+                    DiaChi = "89, đường Xô Viết Nghệ Tĩnh, phường 21, quận Bình Thạnh, Thành phố Hồ Chí Minh"
                 },
 
-                new Customer
+                new KhachHang
                 {
-                    CustomerId = 8,
-                    FullName = "Lê Thị Mai",
-                    PhoneNumber = "0900000008",
+                    MaKhachHang = 8,
+                    HoTen = "Lê Thị Mai",
+                    SoDienThoai = "0900000008",
                     Email = "lethimai@gmail.com",
-                    Address = "Bình Dương"
+                    DiaChi = "56, đường Võ Văn Ngân, phường Linh Chiểu, thành phố Thủ Đức, Thành phố Hồ Chí Minh"
                 },
 
-                new Customer
+                new KhachHang
                 {
-                    CustomerId = 9,
-                    FullName = "Phạm Văn Nam",
-                    PhoneNumber = "0900000009",
+                    MaKhachHang = 9,
+                    HoTen = "Phạm Văn Nam",
+                    SoDienThoai = "0900000009",
                     Email = "phamvannam@gmail.com",
-                    Address = "Đồng Nai"
+                    DiaChi = "23, đường Nguyễn Văn Linh, phường Tân Phong, quận 7, Thành phố Hồ Chí Minh"
                 },
 
-                new Customer
+                new KhachHang
                 {
-                    CustomerId = 10,
-                    FullName = "Hoàng Thị Hoa",
-                    PhoneNumber = "0900000010",
+                    MaKhachHang = 10,
+                    HoTen = "Hoàng Thị Hoa",
+                    SoDienThoai = "0900000010",
                     Email = "hoangthihoa@gmail.com",
-                    Address = "TP. Hồ Chí Minh"
+                    DiaChi = "101, đường Cách Mạng Tháng Tám, phường 7, quận 3, Thành phố Hồ Chí Minh"
                 },
 
-                new Customer
+                new KhachHang
                 {
-                    CustomerId = 11,
-                    FullName = "Đỗ Văn Thành",
-                    PhoneNumber = "0900000011",
+                    MaKhachHang = 11,
+                    HoTen = "Đỗ Văn Thành",
+                    SoDienThoai = "0900000011",
                     Email = "dovanthanh@gmail.com",
-                    Address = "Tây Ninh"
+                    DiaChi = "64, đường Lê Văn Việt, phường Tăng Nhơn Phú A, thành phố Thủ Đức, Thành phố Hồ Chí Minh"
                 },
 
-                new Customer
+                new KhachHang
                 {
-                    CustomerId = 12,
-                    FullName = "Vũ Thị Hương",
-                    PhoneNumber = "0900000012",
+                    MaKhachHang = 12,
+                    HoTen = "Vũ Thị Hương",
+                    SoDienThoai = "0900000012",
                     Email = "vuthihuong@gmail.com",
-                    Address = "TP. Hồ Chí Minh"
+                    DiaChi = "28, đường Hoàng Văn Thụ, phường 4, quận Tân Bình, Thành phố Hồ Chí Minh"
                 },
 
-                new Customer
+                new KhachHang
                 {
-                    CustomerId = 13,
-                    FullName = "Nguyễn Văn Long",
-                    PhoneNumber = "0900000013",
+                    MaKhachHang = 13,
+                    HoTen = "Nguyễn Văn Long",
+                    SoDienThoai = "0900000013",
                     Email = "nguyenvanlong@gmail.com",
-                    Address = "Bà Rịa - Vũng Tàu"
+                    DiaChi = "45, đường Trần Hưng Đạo, phường Phú Cường, thành phố Thủ Dầu Một, tỉnh Bình Dương"
                 },
 
-                new Customer
+                new KhachHang
                 {
-                    CustomerId = 14,
-                    FullName = "Trần Thị Ngọc",
-                    PhoneNumber = "0900000014",
+                    MaKhachHang = 14,
+                    HoTen = "Trần Thị Ngọc",
+                    SoDienThoai = "0900000014",
                     Email = "tranthingoc@gmail.com",
-                    Address = "TP. Hồ Chí Minh"
+                    DiaChi = "73, đường Điện Biên Phủ, phường Đa Kao, quận 1, Thành phố Hồ Chí Minh"
                 },
 
-                new Customer
+                new KhachHang
                 {
-                    CustomerId = 15,
-                    FullName = "Lê Văn Phúc",
-                    PhoneNumber = "0900000015",
+                    MaKhachHang = 15,
+                    HoTen = "Lê Văn Phúc",
+                    SoDienThoai = "0900000015",
                     Email = "levanphuc@gmail.com",
-                    Address = "Bình Phước"
+                    DiaChi = "19, đường Nguyễn Tất Thành, phường Phước Nguyên, thành phố Bà Rịa, tỉnh Bà Rịa - Vũng Tàu"
                 }
             );
 
 
             // ========================================================
-            // 4. SEED 3 USER
+            // 4. SEED 3 NGƯỜI DÙNG
             // ========================================================
 
-            modelBuilder.Entity<User>().HasData(
+            modelBuilder.Entity<NguoiDung>().HasData(
 
-                new User
+                new NguoiDung
                 {
-                    UserId = 1,
-                    Username = "admin",
-                    Password = "123456",
-                    FullName = "Quản trị viên",
-                    Role = "Admin",
-                    IsActive = true
+                    MaNguoiDung = 1,
+                    TenDangNhap = "admin",
+                    MatKhau = "123456",
+                    HoTen = "Quản trị viên",
+                    VaiTro = "Admin",
+                    DangHoatDong = true
                 },
 
-                new User
+                new NguoiDung
                 {
-                    UserId = 2,
-                    Username = "cashier1",
-                    Password = "123456",
-                    FullName = "Nguyễn Văn Thuận",
-                    Role = "Cashier",
-                    IsActive = true
+                    MaNguoiDung = 2,
+                    TenDangNhap = "cashier1",
+                    MatKhau = "123456",
+                    HoTen = "Nguyễn Văn Thuận",
+                    VaiTro = "Cashier",
+                    DangHoatDong = true
                 },
 
-                new User
+                new NguoiDung
                 {
-                    UserId = 3,
-                    Username = "cashier2",
-                    Password = "123456",
-                    FullName = "Trần Văn Nam",
-                    Role = "Cashier",
-                    IsActive = true
+                    MaNguoiDung = 3,
+                    TenDangNhap = "cashier2",
+                    MatKhau = "123456",
+                    HoTen = "Trần Văn Nam",
+                    VaiTro = "Cashier",
+                    DangHoatDong = true
                 }
             );
 
@@ -668,106 +668,106 @@ namespace MiniSupermarket.API.Data
             // 5. SEED 10 ĐƠN HÀNG
             // ========================================================
 
-            modelBuilder.Entity<Order>().HasData(
+            modelBuilder.Entity<DonHang>().HasData(
 
-                new Order
+                new DonHang
                 {
-                    OrderId = 1,
-                    CustomerId = 1,
-                    UserId = 1,
-                    OrderDate = new DateTime(2026, 10, 1, 9, 0, 0),
-                    TotalAmount = 205000,
-                    Status = "Completed"
+                    MaDonHang = 1,
+                    MaKhachHang = 1,
+                    MaNguoiDung = 1,
+                    NgayDatHang = new DateTime(2026, 10, 1, 9, 0, 0),
+                    TongTien = 205000,
+                    TrangThai = "Completed"
                 },
 
-                new Order
+                new DonHang
                 {
-                    OrderId = 2,
-                    CustomerId = 2,
-                    UserId = 2,
-                    OrderDate = new DateTime(2026, 10, 1, 10, 0, 0),
-                    TotalAmount = 115000,
-                    Status = "Completed"
+                    MaDonHang = 2,
+                    MaKhachHang = 2,
+                    MaNguoiDung = 2,
+                    NgayDatHang = new DateTime(2026, 10, 1, 10, 0, 0),
+                    TongTien = 115000,
+                    TrangThai = "Completed"
                 },
 
-                new Order
+                new DonHang
                 {
-                    OrderId = 3,
-                    CustomerId = 3,
-                    UserId = 2,
-                    OrderDate = new DateTime(2026, 10, 2, 11, 0, 0),
-                    TotalAmount = 165000,
-                    Status = "Completed"
+                    MaDonHang = 3,
+                    MaKhachHang = 3,
+                    MaNguoiDung = 2,
+                    NgayDatHang = new DateTime(2026, 10, 2, 11, 0, 0),
+                    TongTien = 165000,
+                    TrangThai = "Completed"
                 },
 
-                new Order
+                new DonHang
                 {
-                    OrderId = 4,
-                    CustomerId = 4,
-                    UserId = 3,
-                    OrderDate = new DateTime(2026, 10, 2, 14, 0, 0),
-                    TotalAmount = 95000,
-                    Status = "Completed"
+                    MaDonHang = 4,
+                    MaKhachHang = 4,
+                    MaNguoiDung = 3,
+                    NgayDatHang = new DateTime(2026, 10, 2, 14, 0, 0),
+                    TongTien = 95000,
+                    TrangThai = "Completed"
                 },
 
-                new Order
+                new DonHang
                 {
-                    OrderId = 5,
-                    CustomerId = 5,
-                    UserId = 1,
-                    OrderDate = new DateTime(2026, 10, 3, 9, 30, 0),
-                    TotalAmount = 110000,
-                    Status = "Completed"
+                    MaDonHang = 5,
+                    MaKhachHang = 5,
+                    MaNguoiDung = 1,
+                    NgayDatHang = new DateTime(2026, 10, 3, 9, 30, 0),
+                    TongTien = 110000,
+                    TrangThai = "Completed"
                 },
 
-                new Order
+                new DonHang
                 {
-                    OrderId = 6,
-                    CustomerId = 1,
-                    UserId = 2,
-                    OrderDate = new DateTime(2026, 10, 3, 13, 0, 0),
-                    TotalAmount = 88000,
-                    Status = "Completed"
+                    MaDonHang = 6,
+                    MaKhachHang = 1,
+                    MaNguoiDung = 2,
+                    NgayDatHang = new DateTime(2026, 10, 3, 13, 0, 0),
+                    TongTien = 88000,
+                    TrangThai = "Completed"
                 },
 
-                new Order
+                new DonHang
                 {
-                    OrderId = 7,
-                    CustomerId = 2,
-                    UserId = 3,
-                    OrderDate = new DateTime(2026, 10, 4, 10, 30, 0),
-                    TotalAmount = 170000,
-                    Status = "Completed"
+                    MaDonHang = 7,
+                    MaKhachHang = 2,
+                    MaNguoiDung = 3,
+                    NgayDatHang = new DateTime(2026, 10, 4, 10, 30, 0),
+                    TongTien = 170000,
+                    TrangThai = "Completed"
                 },
 
-                new Order
+                new DonHang
                 {
-                    OrderId = 8,
-                    CustomerId = 3,
-                    UserId = 1,
-                    OrderDate = new DateTime(2026, 10, 5, 15, 0, 0),
-                    TotalAmount = 165000,
-                    Status = "Completed"
+                    MaDonHang = 8,
+                    MaKhachHang = 3,
+                    MaNguoiDung = 1,
+                    NgayDatHang = new DateTime(2026, 10, 5, 15, 0, 0),
+                    TongTien = 165000,
+                    TrangThai = "Completed"
                 },
 
-                new Order
+                new DonHang
                 {
-                    OrderId = 9,
-                    CustomerId = 4,
-                    UserId = 2,
-                    OrderDate = new DateTime(2026, 10, 6, 16, 0, 0),
-                    TotalAmount = 185000,
-                    Status = "Completed"
+                    MaDonHang = 9,
+                    MaKhachHang = 4,
+                    MaNguoiDung = 2,
+                    NgayDatHang = new DateTime(2026, 10, 6, 16, 0, 0),
+                    TongTien = 185000,
+                    TrangThai = "Completed"
                 },
 
-                new Order
+                new DonHang
                 {
-                    OrderId = 10,
-                    CustomerId = 5,
-                    UserId = 3,
-                    OrderDate = new DateTime(2026, 10, 7, 17, 0, 0),
-                    TotalAmount = 195000,
-                    Status = "Completed"
+                    MaDonHang = 10,
+                    MaKhachHang = 5,
+                    MaNguoiDung = 3,
+                    NgayDatHang = new DateTime(2026, 10, 7, 17, 0, 0),
+                    TongTien = 195000,
+                    TrangThai = "Completed"
                 }
             );
 
@@ -777,216 +777,216 @@ namespace MiniSupermarket.API.Data
             // Mỗi đơn hàng có 2 sản phẩm
             // ========================================================
 
-            modelBuilder.Entity<OrderDetail>().HasData(
+            modelBuilder.Entity<ChiTietDonHang>().HasData(
 
-                // Order 1
-                new OrderDetail
+                // Đơn hàng 1
+                new ChiTietDonHang
                 {
-                    OrderDetailId = 1,
-                    OrderId = 1,
-                    ProductId = 1,
-                    Quantity = 1,
-                    UnitPrice = 85000,
-                    TotalPrice = 85000
+                    MaChiTietDonHang = 1,
+                    MaDonHang = 1,
+                    MaSanPham = 1,
+                    SoLuong = 1,
+                    DonGia = 85000,
+                    ThanhTien = 85000
                 },
 
-                new OrderDetail
+                new ChiTietDonHang
                 {
-                    OrderDetailId = 2,
-                    OrderId = 1,
-                    ProductId = 2,
-                    Quantity = 1,
-                    UnitPrice = 120000,
-                    TotalPrice = 120000
+                    MaChiTietDonHang = 2,
+                    MaDonHang = 1,
+                    MaSanPham = 2,
+                    SoLuong = 1,
+                    DonGia = 120000,
+                    ThanhTien = 120000
                 },
 
-                // Order 2
-                new OrderDetail
+                // Đơn hàng 2
+                new ChiTietDonHang
                 {
-                    OrderDetailId = 3,
-                    OrderId = 2,
-                    ProductId = 3,
-                    Quantity = 2,
-                    UnitPrice = 35000,
-                    TotalPrice = 70000
+                    MaChiTietDonHang = 3,
+                    MaDonHang = 2,
+                    MaSanPham = 3,
+                    SoLuong = 2,
+                    DonGia = 35000,
+                    ThanhTien = 70000
                 },
 
-                new OrderDetail
+                new ChiTietDonHang
                 {
-                    OrderDetailId = 4,
-                    OrderId = 2,
-                    ProductId = 4,
-                    Quantity = 1,
-                    UnitPrice = 45000,
-                    TotalPrice = 45000
+                    MaChiTietDonHang = 4,
+                    MaDonHang = 2,
+                    MaSanPham = 4,
+                    SoLuong = 1,
+                    DonGia = 45000,
+                    ThanhTien = 45000
                 },
 
-                // Order 3
-                new OrderDetail
+                // Đơn hàng 3
+                new ChiTietDonHang
                 {
-                    OrderDetailId = 5,
-                    OrderId = 3,
-                    ProductId = 5,
-                    Quantity = 1,
-                    UnitPrice = 55000,
-                    TotalPrice = 55000
+                    MaChiTietDonHang = 5,
+                    MaDonHang = 3,
+                    MaSanPham = 5,
+                    SoLuong = 1,
+                    DonGia = 55000,
+                    ThanhTien = 55000
                 },
 
-                new OrderDetail
+                new ChiTietDonHang
                 {
-                    OrderDetailId = 6,
-                    OrderId = 3,
-                    ProductId = 6,
-                    Quantity = 1,
-                    UnitPrice = 110000,
-                    TotalPrice = 110000
+                    MaChiTietDonHang = 6,
+                    MaDonHang = 3,
+                    MaSanPham = 6,
+                    SoLuong = 1,
+                    DonGia = 110000,
+                    ThanhTien = 110000
                 },
 
-                // Order 4
-                new OrderDetail
+                // Đơn hàng 4
+                new ChiTietDonHang
                 {
-                    OrderDetailId = 7,
-                    OrderId = 4,
-                    ProductId = 7,
-                    Quantity = 1,
-                    UnitPrice = 45000,
-                    TotalPrice = 45000
+                    MaChiTietDonHang = 7,
+                    MaDonHang = 4,
+                    MaSanPham = 7,
+                    SoLuong = 1,
+                    DonGia = 45000,
+                    ThanhTien = 45000
                 },
 
-                new OrderDetail
+                new ChiTietDonHang
                 {
-                    OrderDetailId = 8,
-                    OrderId = 4,
-                    ProductId = 8,
-                    Quantity = 2,
-                    UnitPrice = 25000,
-                    TotalPrice = 50000
+                    MaChiTietDonHang = 8,
+                    MaDonHang = 4,
+                    MaSanPham = 8,
+                    SoLuong = 2,
+                    DonGia = 25000,
+                    ThanhTien = 50000
                 },
 
-                // Order 5
-                new OrderDetail
+                // Đơn hàng 5
+                new ChiTietDonHang
                 {
-                    OrderDetailId = 9,
-                    OrderId = 5,
-                    ProductId = 9,
-                    Quantity = 1,
-                    UnitPrice = 35000,
-                    TotalPrice = 35000
+                    MaChiTietDonHang = 9,
+                    MaDonHang = 5,
+                    MaSanPham = 9,
+                    SoLuong = 1,
+                    DonGia = 35000,
+                    ThanhTien = 35000
                 },
 
-                new OrderDetail
+                new ChiTietDonHang
                 {
-                    OrderDetailId = 10,
-                    OrderId = 5,
-                    ProductId = 10,
-                    Quantity = 1,
-                    UnitPrice = 75000,
-                    TotalPrice = 75000
+                    MaChiTietDonHang = 10,
+                    MaDonHang = 5,
+                    MaSanPham = 10,
+                    SoLuong = 1,
+                    DonGia = 75000,
+                    ThanhTien = 75000
                 },
 
-                // Order 6
-                new OrderDetail
+                // Đơn hàng 6
+                new ChiTietDonHang
                 {
-                    OrderDetailId = 11,
-                    OrderId = 6,
-                    ProductId = 11,
-                    Quantity = 2,
-                    UnitPrice = 30000,
-                    TotalPrice = 60000
+                    MaChiTietDonHang = 11,
+                    MaDonHang = 6,
+                    MaSanPham = 11,
+                    SoLuong = 2,
+                    DonGia = 30000,
+                    ThanhTien = 60000
                 },
 
-                new OrderDetail
+                new ChiTietDonHang
                 {
-                    OrderDetailId = 12,
-                    OrderId = 6,
-                    ProductId = 12,
-                    Quantity = 1,
-                    UnitPrice = 28000,
-                    TotalPrice = 28000
+                    MaChiTietDonHang = 12,
+                    MaDonHang = 6,
+                    MaSanPham = 12,
+                    SoLuong = 1,
+                    DonGia = 28000,
+                    ThanhTien = 28000
                 },
 
-                // Order 7
-                new OrderDetail
+                // Đơn hàng 7
+                new ChiTietDonHang
                 {
-                    OrderDetailId = 13,
-                    OrderId = 7,
-                    ProductId = 13,
-                    Quantity = 2,
-                    UnitPrice = 65000,
-                    TotalPrice = 130000
+                    MaChiTietDonHang = 13,
+                    MaDonHang = 7,
+                    MaSanPham = 13,
+                    SoLuong = 2,
+                    DonGia = 65000,
+                    ThanhTien = 130000
                 },
 
-                new OrderDetail
+                new ChiTietDonHang
                 {
-                    OrderDetailId = 14,
-                    OrderId = 7,
-                    ProductId = 14,
-                    Quantity = 1,
-                    UnitPrice = 40000,
-                    TotalPrice = 40000
+                    MaChiTietDonHang = 14,
+                    MaDonHang = 7,
+                    MaSanPham = 14,
+                    SoLuong = 1,
+                    DonGia = 40000,
+                    ThanhTien = 40000
                 },
 
-                // Order 8
-                new OrderDetail
+                // Đơn hàng 8
+                new ChiTietDonHang
                 {
-                    OrderDetailId = 15,
-                    OrderId = 8,
-                    ProductId = 15,
-                    Quantity = 1,
-                    UnitPrice = 90000,
-                    TotalPrice = 90000
+                    MaChiTietDonHang = 15,
+                    MaDonHang = 8,
+                    MaSanPham = 15,
+                    SoLuong = 1,
+                    DonGia = 90000,
+                    ThanhTien = 90000
                 },
 
-                new OrderDetail
+                new ChiTietDonHang
                 {
-                    OrderDetailId = 16,
-                    OrderId = 8,
-                    ProductId = 16,
-                    Quantity = 1,
-                    UnitPrice = 75000,
-                    TotalPrice = 75000
+                    MaChiTietDonHang = 16,
+                    MaDonHang = 8,
+                    MaSanPham = 16,
+                    SoLuong = 1,
+                    DonGia = 75000,
+                    ThanhTien = 75000
                 },
 
-                // Order 9
-                new OrderDetail
+                // Đơn hàng 9
+                new ChiTietDonHang
                 {
-                    OrderDetailId = 17,
-                    OrderId = 9,
-                    ProductId = 19,
-                    Quantity = 2,
-                    UnitPrice = 45000,
-                    TotalPrice = 90000
+                    MaChiTietDonHang = 17,
+                    MaDonHang = 9,
+                    MaSanPham = 19,
+                    SoLuong = 2,
+                    DonGia = 45000,
+                    ThanhTien = 90000
                 },
 
-                new OrderDetail
+                new ChiTietDonHang
                 {
-                    OrderDetailId = 18,
-                    OrderId = 9,
-                    ProductId = 21,
-                    Quantity = 1,
-                    UnitPrice = 95000,
-                    TotalPrice = 95000
+                    MaChiTietDonHang = 18,
+                    MaDonHang = 9,
+                    MaSanPham = 21,
+                    SoLuong = 1,
+                    DonGia = 95000,
+                    ThanhTien = 95000
                 },
 
-                // Order 10
-                new OrderDetail
+                // Đơn hàng 10
+                new ChiTietDonHang
                 {
-                    OrderDetailId = 19,
-                    OrderId = 10,
-                    ProductId = 29,
-                    Quantity = 1,
-                    UnitPrice = 15000,
-                    TotalPrice = 15000
+                    MaChiTietDonHang = 19,
+                    MaDonHang = 10,
+                    MaSanPham = 29,
+                    SoLuong = 1,
+                    DonGia = 15000,
+                    ThanhTien = 15000
                 },
 
-                new OrderDetail
+                new ChiTietDonHang
                 {
-                    OrderDetailId = 20,
-                    OrderId = 10,
-                    ProductId = 30,
-                    Quantity = 1,
-                    UnitPrice = 180000,
-                    TotalPrice = 180000
+                    MaChiTietDonHang = 20,
+                    MaDonHang = 10,
+                    MaSanPham = 30,
+                    SoLuong = 1,
+                    DonGia = 180000,
+                    ThanhTien = 180000
                 }
             );
         }

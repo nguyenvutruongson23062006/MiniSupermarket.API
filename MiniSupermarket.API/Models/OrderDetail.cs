@@ -4,37 +4,37 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace MiniSupermarket.API.Models
 {
     // Model đại diện cho bảng chi tiết đơn hàng
-    [Table("OrderDetails")]
-    public class OrderDetail
+    [Table("ChiTietDonHang")]
+    public class ChiTietDonHang
     {
-        // Khóa chính của chi tiết đơn hàng
+        // Mã chi tiết đơn hàng - Khóa chính
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int OrderDetailId { get; set; }
+        public int MaChiTietDonHang { get; set; }
 
-        // Mã đơn hàng
-        public int OrderId { get; set; }
+        // Mã đơn hàng - Khóa ngoại
+        public int MaDonHang { get; set; }
 
         // Đơn hàng chứa sản phẩm này
-        [ForeignKey("OrderId")]
-        public virtual Order? Order { get; set; }
+        [ForeignKey("MaDonHang")]
+        public virtual DonHang? DonHang { get; set; }
 
-        // Mã sản phẩm
-        public int ProductId { get; set; }
+        // Mã sản phẩm - Khóa ngoại
+        public int MaSanPham { get; set; }
 
         // Sản phẩm được mua
-        [ForeignKey("ProductId")]
-        public virtual Product? Product { get; set; }
+        [ForeignKey("MaSanPham")]
+        public virtual SanPham? SanPham { get; set; }
 
         // Số lượng sản phẩm
-        public int Quantity { get; set; }
+        public int SoLuong { get; set; }
 
         // Đơn giá tại thời điểm mua
         [Column(TypeName = "decimal(18,2)")]
-        public decimal UnitPrice { get; set; }
+        public decimal DonGia { get; set; }
 
         // Thành tiền
         [Column(TypeName = "decimal(18,2)")]
-        public decimal TotalPrice { get; set; }
+        public decimal ThanhTien { get; set; }
     }
 }

@@ -3,36 +3,37 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MiniSupermarket.API.Models
 {
-    [Table("Products")]
-    public class Product
+    // Model đại diện cho bảng sản phẩm
+    [Table("SanPham")]
+    public class SanPham
     {
         // Mã sản phẩm - Khóa chính
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int ProductId { get; set; }
+        public int MaSanPham { get; set; }
 
         // Mã vạch sản phẩm
-        [Required(ErrorMessage = "Mã vạch sản phẩm không được trống")]
+        [Required(ErrorMessage = "Mã vạch sản phẩm không được để trống")]
         [StringLength(50)]
-        public string Barcode { get; set; } = string.Empty;
+        public string MaVach { get; set; } = string.Empty;
 
         // Tên sản phẩm
         [Required(ErrorMessage = "Tên sản phẩm không được để trống")]
         [StringLength(150)]
-        public string ProductName { get; set; } = string.Empty;
+        public string TenSanPham { get; set; } = string.Empty;
 
         // Giá bán
         [Column(TypeName = "decimal(18,2)")]
-        public decimal Price { get; set; }
+        public decimal GiaBan { get; set; }
 
         // Số lượng tồn kho
-        public int StockQuantity { get; set; }
+        public int SoLuongTon { get; set; }
 
-        // Khóa ngoại liên kết tới bảng Categories
-        public int CategoryId { get; set; }
+        // Mã nhóm hàng - Khóa ngoại
+        public int MaNhomHang { get; set; }
 
-        // Quan hệ với Category
-        [ForeignKey("CategoryId")]
-        public virtual Category? Category { get; set; }
+        // Nhóm hàng của sản phẩm
+        [ForeignKey("MaNhomHang")]
+        public virtual NhomHang? NhomHang { get; set; }
     }
 }
