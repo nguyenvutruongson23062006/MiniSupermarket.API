@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi;
 using MiniSupermarket.API.Data;
 using System.Text;
 
@@ -40,7 +41,29 @@ builder.Services.AddAuthentication(options =>
 // Cấu hình dịch vụ và middleware khác
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    // Cho phép nhập JWT trong nút Authorize của Swagger UI.
+    options.AddSecurityDefinition(
+        "Bearer",
+        new OpenApiSecurityScheme
+        {
+            Type = SecuritySchemeType.Http,
+            Scheme = "bearer",
+            BearerFormat = "JWT",
+            Description =
+                "Nhập JWT nhận được từ POST /api/auth/login. " +
+                "Swagger sẽ tự thêm tiền tố Bearer."
+        });
+
+    options.AddSecurityRequirement(document =>
+        new OpenApiSecurityRequirement
+        {
+            [new OpenApiSecuritySchemeReference(
+                "Bearer",
+                document)] = []
+        });
+});
 
 var app = builder.Build();
 

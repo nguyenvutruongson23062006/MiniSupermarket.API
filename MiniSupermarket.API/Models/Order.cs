@@ -13,7 +13,8 @@ namespace MiniSupermarket.API.Models
         public int MaDonHang { get; set; }
 
         // Mã khách hàng - Khóa ngoại
-        public int MaKhachHang { get; set; }
+        // Có thể để trống đối với khách vãng lai tại quầy POS.
+        public int? MaKhachHang { get; set; }
 
         // Khách hàng thực hiện đơn hàng
         [ForeignKey("MaKhachHang")]

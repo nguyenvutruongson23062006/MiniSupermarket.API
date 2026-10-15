@@ -1,140 +1,263 @@
-﻿using System;
+﻿
+using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
+using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Net.Http.Json;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Net.Http.Json;
-using System.Net.Http.Headers;
 
 namespace MiniSupermarket.WinForms
 {
-    // =============================================================
-    // FORM QUẢN LÝ NHÓM HÀNG
-    // =============================================================
+    // Form quản lý nhóm hàng của siêu thị Đời Sống Xanh
     public partial class FormCategoryManagement : Form
     {
+        // Địa chỉ Web API của hệ thống
         private static readonly HttpClient _client = new HttpClient
         {
             BaseAddress = new Uri("https://localhost:7163/api/")
         };
 
+        // Hàm khởi tạo Form quản lý nhóm hàng
         public FormCategoryManagement()
         {
             InitializeComponent();
+
+            // Không cho phép tự thêm dòng vào DataGridView
+            dgvCategories.AllowUserToAddRows = false;
+
+            // Chỉ cho phép chọn nguyên dòng
+            dgvCategories.SelectionMode =
+                DataGridViewSelectionMode.FullRowSelect;
+
+            dgvCategories.MultiSelect = false;
+            dgvCategories.ReadOnly = true;
+
+            // Cho DataGridView giãn theo kích thước GroupBox
+            dgvCategories.Anchor =
+                AnchorStyles.Top |
+                AnchorStyles.Bottom |
+                AnchorStyles.Left |
+                AnchorStyles.Right;
+
+            // Thiết lập quyền sử dụng các nút
+            ApplyPermissions();
         }
 
-        // Khi Form mở
-        private async void FormCategoryManagement_Load(object sender, EventArgs e)
+        // Hàm xử lý khi Form được mở
+        private async void FormCategoryManagement_Load(
+            object sender, EventArgs e)
         {
             await LoadDataAsync();
         }
 
-        // =========================================================
-        // TẠO HTTP CLIENT KÈM JWT TOKEN
-        // =========================================================
-        private HttpClient GetAuthenticatedClient()
+        // Hàm tạo HTTP request có gắn JWT Token
+        private HttpRequestMessage CreateRequest(
+            HttpMethod method,
+            string endpoint)
         {
-            var client = new HttpClient
-            {
-                BaseAddress = new Uri("https://localhost:7163/api/")
-            };
+            var request = new HttpRequestMessage(method, endpoint);
 
-            // Gắn Bearer Token vào Header
-            if (!string.IsNullOrEmpty(SessionManager.JwtToken))
+            if (!string.IsNullOrWhiteSpace(SessionManager.JwtToken))
             {
-                client.DefaultRequestHeaders.Authorization =
+                request.Headers.Authorization =
                     new AuthenticationHeaderValue(
                         "Bearer",
                         SessionManager.JwtToken);
             }
 
-            return client;
+            return request;
         }
 
-        // =========================================================
-        // LOAD DATA
-        // =========================================================
+        // Hàm gửi HTTP request đến Web API
+        private async Task<HttpResponseMessage> SendRequestAsync(
+            HttpMethod method,
+            string endpoint,
+            object? data = null)
+        {
+            using var request = CreateRequest(method, endpoint);
+
+            // Đính kèm dữ liệu JSON khi thêm hoặc cập nhật
+            if (data != null)
+            {
+                request.Content = JsonContent.Create(data);
+            }
+
+            return await _client.SendAsync(request);
+        }
+
+        // Hàm kiểm tra và thông báo lỗi từ Web API
+        private bool CheckResponse(HttpResponseMessage response)
+        {
+            if (response.IsSuccessStatusCode)
+                return true;
+
+            if (response.StatusCode == HttpStatusCode.Unauthorized)
+            {
+                MessageBox.Show(
+                    "Phiên đăng nhập không hợp lệ hoặc đã hết hạn!",
+                    "Lỗi xác thực",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+            }
+            else if (response.StatusCode == HttpStatusCode.Forbidden)
+            {
+                MessageBox.Show(
+                    "Tài khoản không có quyền thực hiện chức năng này!",
+                    "Không đủ quyền",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+            }
+            else if (response.StatusCode == HttpStatusCode.NotFound)
+            {
+                MessageBox.Show(
+                    "Không tìm thấy nhóm hàng!",
+                    "Thông báo",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
+            }
+            else if (response.StatusCode == HttpStatusCode.Conflict)
+            {
+                MessageBox.Show(
+                    "Dữ liệu đang được sử dụng hoặc bị xung đột!",
+                    "Không thể thực hiện",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+            }
+            else
+            {
+                MessageBox.Show(
+                    $"Yêu cầu thất bại! Mã HTTP: {(int)response.StatusCode}",
+                    "Lỗi Web API",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+            }
+
+            return false;
+        }
+
+        // Hàm phân quyền các nút chức năng
+        private void ApplyPermissions()
+        {
+            bool canManage = string.Equals(
+                SessionManager.CurrentRole,
+                "Admin",
+                StringComparison.OrdinalIgnoreCase)
+                || string.Equals(
+                    SessionManager.CurrentRole,
+                    "Warehouse",
+                    StringComparison.OrdinalIgnoreCase);
+
+            btnAdd.Enabled = canManage;
+            btnUpdate.Enabled = canManage;
+            btnDelete.Enabled = canManage;
+        }
+
+        // Hàm tải danh sách nhóm hàng từ SQL Server qua API
         private async Task LoadDataAsync()
         {
             try
             {
-                // Tạo HttpClient đã được gắn JWT Token
-                using var client = GetAuthenticatedClient();
+                using var response = await SendRequestAsync(
+                    HttpMethod.Get,
+                    "categories");
+
+                if (!CheckResponse(response))
+                    return;
 
                 var categories =
-                    await client.GetFromJsonAsync<List<CategoryDto>>("categories");
+                    await response.Content.ReadFromJsonAsync<
+                        List<CategoryDto>>();
 
-                dgvCategories.DataSource = categories;
+                // Xóa liên kết dữ liệu cũ
+                dgvCategories.DataSource = null;
 
+                // Tạo lại các cột theo DTO hiện tại
+                dgvCategories.AutoGenerateColumns = true;
+                dgvCategories.Columns.Clear();
+
+                // Gán dữ liệu mới
+                dgvCategories.DataSource =
+                    categories ?? new List<CategoryDto>();
+
+                // Định dạng DataGridView
                 FormatDataGridView();
             }
             catch (Exception ex)
             {
                 MessageBox.Show(
-                    "Lỗi kết nối Server:\n" + ex.Message,
-                    "Lỗi",
+                    "Lỗi tải danh sách nhóm hàng:\n" + ex.Message,
+                    "Lỗi kết nối",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
             }
         }
 
         // =========================================================
-        // FORMAT DATAGRIDVIEW
+        // ĐỊNH DẠNG DATAGRIDVIEW - ĐÃ SỬA GIÃN HẾT CHIỀU NGANG
         // =========================================================
         private void FormatDataGridView()
         {
             if (dgvCategories.Columns.Count == 0)
                 return;
 
-            dgvCategories.AutoGenerateColumns = true;
-            dgvCategories.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
+            // Tự động phân bổ chiều rộng cho các cột
+            dgvCategories.AutoSizeColumnsMode =
+                DataGridViewAutoSizeColumnsMode.Fill;
 
-            if (dgvCategories.Columns["CategoryId"] != null)
+            // Cột mã nhóm hàng
+            if (dgvCategories.Columns["MaNhomHang"] != null)
             {
-                dgvCategories.Columns["CategoryId"].HeaderText = "Mã ID";
-                dgvCategories.Columns["CategoryId"].Width = 65;
+                var col = dgvCategories.Columns["MaNhomHang"]!;
+
+                col.HeaderText = "Mã ID";
+                col.MinimumWidth = 65;
+                col.FillWeight = 12;
+                col.DisplayIndex = 0;
             }
 
-            if (dgvCategories.Columns["CategoryName"] != null)
+            // Cột tên nhóm hàng
+            if (dgvCategories.Columns["TenNhomHang"] != null)
             {
-                dgvCategories.Columns["CategoryName"].HeaderText = "Tên Nhóm hàng";
-                dgvCategories.Columns["CategoryName"].Width = 275;
+                var col = dgvCategories.Columns["TenNhomHang"]!;
+
+                col.HeaderText = "Tên Nhóm hàng";
+                col.MinimumWidth = 180;
+                col.FillWeight = 38;
+                col.DisplayIndex = 1;
             }
 
-            if (dgvCategories.Columns["Description"] != null)
+            // Cột mô tả nhóm hàng
+            if (dgvCategories.Columns["MoTa"] != null)
             {
-                dgvCategories.Columns["Description"].HeaderText = "Mô Tả";
-                dgvCategories.Columns["Description"].Width = 260;
+                var col = dgvCategories.Columns["MoTa"]!;
+
+                col.HeaderText = "Mô Tả";
+                col.MinimumWidth = 220;
+                col.FillWeight = 50;
+                col.DisplayIndex = 2;
             }
 
+            // Thiết lập DataGridView
             dgvCategories.SelectionMode =
                 DataGridViewSelectionMode.FullRowSelect;
 
             dgvCategories.MultiSelect = false;
-
             dgvCategories.AllowUserToAddRows = false;
-
+            dgvCategories.AllowUserToDeleteRows = false;
             dgvCategories.ReadOnly = true;
+
+            dgvCategories.RowHeadersWidth = 30;
+            dgvCategories.AllowUserToResizeRows = false;
+
+            // Cột tự giãn khi DataGridView thay đổi kích thước
+            dgvCategories.AutoSizeColumnsMode =
+                DataGridViewAutoSizeColumnsMode.Fill;
         }
 
-        // =========================================================
-        // TẢI LẠI
-        // =========================================================
-        private async void btnLoad_Click(object sender, EventArgs e)
-        {
-            txtKeyword.Clear();
-            ClearInputs();
-
-            await LoadDataAsync();
-        }
-
-        // =========================================================
-        // CLICK DÒNG
-        // =========================================================
+        // Hàm lấy thông tin nhóm hàng khi chọn một dòng
         private void dgvCategories_CellClick(
             object sender,
             DataGridViewCellEventArgs e)
@@ -142,36 +265,36 @@ namespace MiniSupermarket.WinForms
             if (e.RowIndex < 0)
                 return;
 
-            DataGridViewRow row = dgvCategories.Rows[e.RowIndex];
+            if (e.RowIndex >= dgvCategories.Rows.Count)
+                return;
 
-            if (row.Cells["CategoryId"].Value != null)
-            {
-                txtId.Text =
-                    row.Cells["CategoryId"].Value.ToString();
-            }
+            var row = dgvCategories.Rows[e.RowIndex];
 
-            if (row.Cells["CategoryName"].Value != null)
-            {
-                txtCategoryName.Text =
-                    row.Cells["CategoryName"].Value.ToString();
-            }
+            // Lấy mã nhóm hàng
+            txtId.Text =
+                row.Cells["MaNhomHang"].Value?.ToString()
+                ?? string.Empty;
 
-            if (row.Cells["Description"].Value != null)
-            {
-                txtDescription.Text =
-                    row.Cells["Description"].Value.ToString();
-            }
-            else
-            {
-                txtDescription.Clear();
-            }
+            // Lấy tên nhóm hàng
+            txtCategoryName.Text =
+                row.Cells["TenNhomHang"].Value?.ToString()
+                ?? string.Empty;
+
+            // Lấy mô tả nhóm hàng
+            txtDescription.Text =
+                row.Cells["MoTa"].Value?.ToString()
+                ?? string.Empty;
         }
 
-        // =========================================================
-        // THÊM MỚI
-        // =========================================================
-        private async void btnAdd_Click(object sender, EventArgs e)
+        // Hàm thêm nhóm hàng mới
+        private async void btnAdd_Click(
+            object sender, EventArgs e)
         {
+            // Kiểm tra quyền Admin hoặc Warehouse
+            if (!CanManageCategories())
+                return;
+
+            // Kiểm tra tên nhóm hàng
             if (string.IsNullOrWhiteSpace(txtCategoryName.Text))
             {
                 MessageBox.Show(
@@ -186,54 +309,57 @@ namespace MiniSupermarket.WinForms
 
             try
             {
-                var newCat = new
+                // Tạo dữ liệu nhóm hàng mới
+                var newCategory = new
                 {
-                    CategoryName = txtCategoryName.Text.Trim(),
-                    Description = txtDescription.Text.Trim()
+                    TenNhomHang = txtCategoryName.Text.Trim(),
+                    MoTa = txtDescription.Text.Trim()
                 };
 
-                var response =
-                    await _client.PostAsJsonAsync("categories", newCat);
+                // Gửi POST đến API
+                using var response = await SendRequestAsync(
+                    HttpMethod.Post,
+                    "categories",
+                    newCategory);
 
-                if (response.IsSuccessStatusCode)
-                {
-                    MessageBox.Show(
-                        "Thêm mới thành công!",
-                        "Thông báo",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Information);
+                if (!CheckResponse(response))
+                    return;
 
-                    await LoadDataAsync();
-                    ClearInputs();
-                }
-                else
-                {
-                    MessageBox.Show(
-                        "Thêm mới thất bại!",
-                        "Lỗi",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Warning);
-                }
+                MessageBox.Show(
+                    "Thêm nhóm hàng thành công!",
+                    "Thông báo",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
+
+                // Tải lại dữ liệu
+                await LoadDataAsync();
+
+                // Xóa nội dung các ô nhập
+                ClearInputs();
             }
             catch (Exception ex)
             {
                 MessageBox.Show(
-                    "Lỗi:\n" + ex.Message,
+                    "Lỗi thêm nhóm hàng:\n" + ex.Message,
                     "Lỗi",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
             }
         }
 
-        // =========================================================
-        // CẬP NHẬT
-        // =========================================================
-        private async void btnUpdate_Click(object sender, EventArgs e)
+        // Hàm cập nhật thông tin nhóm hàng
+        private async void btnUpdate_Click(
+            object sender, EventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(txtId.Text))
+            // Kiểm tra quyền Admin hoặc Warehouse
+            if (!CanManageCategories())
+                return;
+
+            // Kiểm tra mã nhóm hàng
+            if (!int.TryParse(txtId.Text, out int id) || id <= 0)
             {
                 MessageBox.Show(
-                    "Vui lòng chọn nhóm hàng cần sửa!",
+                    "Vui lòng chọn nhóm hàng cần cập nhật!",
                     "Cảnh báo",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Warning);
@@ -241,17 +367,7 @@ namespace MiniSupermarket.WinForms
                 return;
             }
 
-            if (!int.TryParse(txtId.Text, out int id))
-            {
-                MessageBox.Show(
-                    "Mã ID không hợp lệ!",
-                    "Lỗi",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
-
-                return;
-            }
-
+            // Kiểm tra tên nhóm hàng
             if (string.IsNullOrWhiteSpace(txtCategoryName.Text))
             {
                 MessageBox.Show(
@@ -265,54 +381,52 @@ namespace MiniSupermarket.WinForms
 
             try
             {
-                var updateCat = new
+                // Dữ liệu cập nhật
+                var updatedCategory = new
                 {
-                    CategoryId = id,
-                    CategoryName = txtCategoryName.Text.Trim(),
-                    Description = txtDescription.Text.Trim()
+                    MaNhomHang = id,
+                    TenNhomHang = txtCategoryName.Text.Trim(),
+                    MoTa = txtDescription.Text.Trim()
                 };
 
-                var response =
-                    await _client.PutAsJsonAsync(
-                        $"categories/{id}",
-                        updateCat);
+                // Gửi PUT đến API
+                using var response = await SendRequestAsync(
+                    HttpMethod.Put,
+                    $"categories/{id}",
+                    updatedCategory);
 
-                if (response.IsSuccessStatusCode)
-                {
-                    MessageBox.Show(
-                        "Cập nhật thành công!",
-                        "Thông báo",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Information);
+                if (!CheckResponse(response))
+                    return;
 
-                    await LoadDataAsync();
-                    ClearInputs();
-                }
-                else
-                {
-                    MessageBox.Show(
-                        "Cập nhật thất bại!",
-                        "Lỗi",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Warning);
-                }
+                MessageBox.Show(
+                    "Cập nhật nhóm hàng thành công!",
+                    "Thông báo",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
+
+                await LoadDataAsync();
+                ClearInputs();
             }
             catch (Exception ex)
             {
                 MessageBox.Show(
-                    "Lỗi:\n" + ex.Message,
+                    "Lỗi cập nhật nhóm hàng:\n" + ex.Message,
                     "Lỗi",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
             }
         }
 
-        // =========================================================
-        // XÓA
-        // =========================================================
-        private async void btnDelete_Click(object sender, EventArgs e)
+        // Hàm xóa nhóm hàng
+        private async void btnDelete_Click(
+            object sender, EventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(txtId.Text))
+            // Kiểm tra quyền Admin hoặc Warehouse
+            if (!CanManageCategories())
+                return;
+
+            // Kiểm tra mã nhóm hàng
+            if (!int.TryParse(txtId.Text, out int id) || id <= 0)
             {
                 MessageBox.Show(
                     "Vui lòng chọn nhóm hàng cần xóa!",
@@ -323,20 +437,10 @@ namespace MiniSupermarket.WinForms
                 return;
             }
 
-            if (!int.TryParse(txtId.Text, out int id))
-            {
-                MessageBox.Show(
-                    "Mã ID không hợp lệ!",
-                    "Lỗi",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
-
-                return;
-            }
-
+            // Yêu cầu xác nhận trước khi xóa
             DialogResult confirm = MessageBox.Show(
-                $"Bạn có chắc muốn xóa nhóm hàng ID = {id}?",
-                "Xác nhận",
+                $"Bạn có chắc chắn muốn xóa nhóm hàng có mã {id}?",
+                "Xác nhận xóa",
                 MessageBoxButtons.YesNo,
                 MessageBoxIcon.Question);
 
@@ -345,47 +449,43 @@ namespace MiniSupermarket.WinForms
 
             try
             {
-                var response =
-                    await _client.DeleteAsync($"categories/{id}");
+                // Gửi DELETE đến API
+                using var response = await SendRequestAsync(
+                    HttpMethod.Delete,
+                    $"categories/{id}");
 
-                if (response.IsSuccessStatusCode)
-                {
-                    MessageBox.Show(
-                        "Xóa thành công!",
-                        "Thông báo",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Information);
+                if (!CheckResponse(response))
+                    return;
 
-                    await LoadDataAsync();
-                    ClearInputs();
-                }
-                else
-                {
-                    MessageBox.Show(
-                        "Xóa thất bại!",
-                        "Lỗi",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Warning);
-                }
+                MessageBox.Show(
+                    "Xóa nhóm hàng thành công!",
+                    "Thông báo",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
+
+                await LoadDataAsync();
+                ClearInputs();
             }
             catch (Exception ex)
             {
                 MessageBox.Show(
-                    "Lỗi:\n" + ex.Message,
+                    "Lỗi xóa nhóm hàng:\n" + ex.Message +
+                    "\n\nNếu nhóm hàng đang có sản phẩm, " +
+                    "SQL Server có thể không cho phép xóa.",
                     "Lỗi",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
             }
         }
 
-        // =========================================================
-        // TÌM KIẾM
-        // =========================================================
-        private async void btnSearch_Click(object sender, EventArgs e)
+        // Hàm tìm kiếm nhóm hàng theo tên
+        private async void btnSearch_Click(
+            object sender, EventArgs e)
         {
             string keyword = txtKeyword.Text.Trim();
 
-            if (string.IsNullOrEmpty(keyword))
+            // Nếu từ khóa trống thì tải toàn bộ danh sách
+            if (string.IsNullOrWhiteSpace(keyword))
             {
                 await LoadDataAsync();
                 return;
@@ -393,30 +493,95 @@ namespace MiniSupermarket.WinForms
 
             try
             {
+                // Mã hóa từ khóa để gửi qua URL
                 string encodedKeyword =
                     Uri.EscapeDataString(keyword);
 
-                var result =
-                    await _client.GetFromJsonAsync<List<CategoryDto>>(
-                        $"categories/search?keyword={encodedKeyword}");
+                // Gửi GET tìm kiếm có JWT
+                using var response = await SendRequestAsync(
+                    HttpMethod.Get,
+                    $"categories/search?keyword={encodedKeyword}");
 
-                dgvCategories.DataSource = result;
+                if (!CheckResponse(response))
+                    return;
+
+                // Đọc kết quả tìm kiếm
+                var result =
+                    await response.Content.ReadFromJsonAsync<
+                        List<CategoryDto>>();
+
+                // Cập nhật bảng
+                dgvCategories.DataSource = null;
+                dgvCategories.AutoGenerateColumns = true;
+                dgvCategories.Columns.Clear();
+
+                dgvCategories.DataSource =
+                    result ?? new List<CategoryDto>();
 
                 FormatDataGridView();
+                ClearInputs();
+
+                // Thông báo nếu không tìm thấy
+                if (result == null || result.Count == 0)
+                {
+                    MessageBox.Show(
+                        "Không tìm thấy nhóm hàng phù hợp!",
+                        "Kết quả tìm kiếm",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Information);
+                }
             }
             catch (Exception ex)
             {
                 MessageBox.Show(
-                    "Không tìm thấy kết quả phù hợp!\n" + ex.Message,
-                    "Thông báo",
+                    "Lỗi tìm kiếm nhóm hàng:\n" + ex.Message,
+                    "Lỗi",
                     MessageBoxButtons.OK,
-                    MessageBoxIcon.Information);
+                    MessageBoxIcon.Error);
             }
         }
 
-        // =========================================================
-        // XÓA Ô NHẬP
-        // =========================================================
+        // Hàm tải lại toàn bộ danh sách nhóm hàng
+        private async void btnLoad_Click(
+            object sender, EventArgs e)
+        {
+            // Xóa từ khóa tìm kiếm
+            txtKeyword.Clear();
+
+            // Xóa dữ liệu các ô nhập
+            ClearInputs();
+
+            // Tải lại danh sách
+            await LoadDataAsync();
+        }
+
+        // Hàm kiểm tra quyền quản lý nhóm hàng
+        private bool CanManageCategories()
+        {
+            bool allowed = string.Equals(
+                    SessionManager.CurrentRole,
+                    "Admin",
+                    StringComparison.OrdinalIgnoreCase)
+                || string.Equals(
+                    SessionManager.CurrentRole,
+                    "Warehouse",
+                    StringComparison.OrdinalIgnoreCase);
+
+            if (allowed)
+            {
+                return true;
+            }
+
+            MessageBox.Show(
+                "Chỉ Admin hoặc Warehouse được quản lý nhóm hàng!",
+                "Không đủ quyền",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Warning);
+
+            return false;
+        }
+
+        // Hàm xóa nội dung các ô nhập
         private void ClearInputs()
         {
             txtId.Clear();
@@ -424,21 +589,23 @@ namespace MiniSupermarket.WinForms
             txtDescription.Clear();
         }
 
-        private void grpCategoryList_Enter(object sender, EventArgs e)
+        // Giữ lại sự kiện đã tạo trong Designer
+        private void grpCategoryList_Enter(
+            object sender, EventArgs e)
         {
-
         }
     }
 
-    // =============================================================
-    // DTO (Data Transfer Object) cho Category
-    // =============================================================
+    // DTO nhận dữ liệu nhóm hàng từ Web API
     public class CategoryDto
     {
-        public int CategoryId { get; set; }
+        // Mã nhóm hàng
+        public int MaNhomHang { get; set; }
 
-        public string CategoryName { get; set; } = string.Empty;
+        // Tên nhóm hàng
+        public string TenNhomHang { get; set; } = string.Empty;
 
-        public string? Description { get; set; }
+        // Mô tả nhóm hàng
+        public string? MoTa { get; set; }
     }
 }

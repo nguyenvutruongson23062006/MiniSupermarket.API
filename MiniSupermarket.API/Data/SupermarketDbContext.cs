@@ -45,6 +45,28 @@ namespace MiniSupermarket.API.Data
         {
             base.OnModelCreating(modelBuilder);
 
+            // Tên đăng nhập và số điện thoại dùng để tra cứu duy nhất.
+            modelBuilder.Entity<NguoiDung>()
+                .HasIndex(x => x.TenDangNhap)
+                .IsUnique();
+
+            modelBuilder.Entity<KhachHang>()
+                .HasIndex(x => x.SoDienThoai)
+                .IsUnique();
+
+            // Không xóa dây chuyền dữ liệu lịch sử bán hàng.
+            modelBuilder.Entity<DonHang>()
+                .HasOne(x => x.KhachHang)
+                .WithMany(x => x.DonHangs)
+                .HasForeignKey(x => x.MaKhachHang)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<DonHang>()
+                .HasOne(x => x.NguoiDung)
+                .WithMany(x => x.DonHangs)
+                .HasForeignKey(x => x.MaNguoiDung)
+                .OnDelete(DeleteBehavior.Restrict);
+
 
             // ========================================================
             // 1. SEED 15 NHÓM HÀNG
@@ -627,17 +649,17 @@ namespace MiniSupermarket.API.Data
 
 
             // ========================================================
-            // 4. SEED 3 NGƯỜI DÙNG
+            // 4. SEED 15 NGƯỜI DÙNG PHÂN QUYỀN BUỔI 4
             // ========================================================
 
             modelBuilder.Entity<NguoiDung>().HasData(
-
                 new NguoiDung
                 {
                     MaNguoiDung = 1,
-                    TenDangNhap = "admin",
+                    TenDangNhap = "admin01",
                     MatKhau = "123456",
-                    HoTen = "Quản trị viên",
+                    HoTen = "Nguyễn Quản Trị",
+                    Email = "admin01@minimart.local",
                     VaiTro = "Admin",
                     DangHoatDong = true
                 },
@@ -645,20 +667,154 @@ namespace MiniSupermarket.API.Data
                 new NguoiDung
                 {
                     MaNguoiDung = 2,
-                    TenDangNhap = "cashier1",
+                    TenDangNhap = "admin02",
                     MatKhau = "123456",
-                    HoTen = "Nguyễn Văn Thuận",
-                    VaiTro = "Cashier",
+                    HoTen = "Trần Giám Đốc",
+                    Email = "admin02@minimart.local",
+                    VaiTro = "Admin",
                     DangHoatDong = true
                 },
 
                 new NguoiDung
                 {
                     MaNguoiDung = 3,
-                    TenDangNhap = "cashier2",
+                    TenDangNhap = "cashier01",
                     MatKhau = "123456",
-                    HoTen = "Trần Văn Nam",
+                    HoTen = "Lê Thu Ngân",
+                    Email = "cashier01@minimart.local",
                     VaiTro = "Cashier",
+                    DangHoatDong = true
+                },
+
+                new NguoiDung
+                {
+                    MaNguoiDung = 4,
+                    TenDangNhap = "cashier02",
+                    MatKhau = "123456",
+                    HoTen = "Phạm Bán Hàng",
+                    Email = "cashier02@minimart.local",
+                    VaiTro = "Cashier",
+                    DangHoatDong = true
+                },
+
+                new NguoiDung
+                {
+                    MaNguoiDung = 5,
+                    TenDangNhap = "cashier03",
+                    MatKhau = "123456",
+                    HoTen = "Hoàng Thu Ngân",
+                    Email = "cashier03@minimart.local",
+                    VaiTro = "Cashier",
+                    DangHoatDong = true
+                },
+
+                new NguoiDung
+                {
+                    MaNguoiDung = 6,
+                    TenDangNhap = "cashier04",
+                    MatKhau = "123456",
+                    HoTen = "Vũ Thị Quầy",
+                    Email = "cashier04@minimart.local",
+                    VaiTro = "Cashier",
+                    DangHoatDong = true
+                },
+
+                new NguoiDung
+                {
+                    MaNguoiDung = 7,
+                    TenDangNhap = "cashier05",
+                    MatKhau = "123456",
+                    HoTen = "Đỗ Bán Lẻ",
+                    Email = "cashier05@minimart.local",
+                    VaiTro = "Cashier",
+                    DangHoatDong = true
+                },
+
+                new NguoiDung
+                {
+                    MaNguoiDung = 8,
+                    TenDangNhap = "ware01",
+                    MatKhau = "123456",
+                    HoTen = "Ngô Quản Kho",
+                    Email = "ware01@minimart.local",
+                    VaiTro = "Warehouse",
+                    DangHoatDong = true
+                },
+
+                new NguoiDung
+                {
+                    MaNguoiDung = 9,
+                    TenDangNhap = "ware02",
+                    MatKhau = "123456",
+                    HoTen = "Bùi Kiểm Kê",
+                    Email = "ware02@minimart.local",
+                    VaiTro = "Warehouse",
+                    DangHoatDong = true
+                },
+
+                new NguoiDung
+                {
+                    MaNguoiDung = 10,
+                    TenDangNhap = "ware03",
+                    MatKhau = "123456",
+                    HoTen = "Dương Thủ Kho",
+                    Email = "ware03@minimart.local",
+                    VaiTro = "Warehouse",
+                    DangHoatDong = true
+                },
+
+                new NguoiDung
+                {
+                    MaNguoiDung = 11,
+                    TenDangNhap = "ware04",
+                    MatKhau = "123456",
+                    HoTen = "Lý Nhập Hàng",
+                    Email = "ware04@minimart.local",
+                    VaiTro = "Warehouse",
+                    DangHoatDong = true
+                },
+
+                new NguoiDung
+                {
+                    MaNguoiDung = 12,
+                    TenDangNhap = "admin_backup",
+                    MatKhau = "123456",
+                    HoTen = "Đặng Hỗ Trợ",
+                    Email = "admin_backup@minimart.local",
+                    VaiTro = "Admin",
+                    DangHoatDong = true
+                },
+
+                new NguoiDung
+                {
+                    MaNguoiDung = 13,
+                    TenDangNhap = "cashier06",
+                    MatKhau = "123456",
+                    HoTen = "Hồ Ca Chiều",
+                    Email = "cashier06@minimart.local",
+                    VaiTro = "Cashier",
+                    DangHoatDong = true
+                },
+
+                new NguoiDung
+                {
+                    MaNguoiDung = 14,
+                    TenDangNhap = "ware05",
+                    MatKhau = "123456",
+                    HoTen = "Trương Vận Chuyển",
+                    Email = "ware05@minimart.local",
+                    VaiTro = "Warehouse",
+                    DangHoatDong = true
+                },
+
+                new NguoiDung
+                {
+                    MaNguoiDung = 15,
+                    TenDangNhap = "supervisor",
+                    MatKhau = "123456",
+                    HoTen = "Mai Giám Sát",
+                    Email = "supervisor@minimart.local",
+                    VaiTro = "Admin",
                     DangHoatDong = true
                 }
             );

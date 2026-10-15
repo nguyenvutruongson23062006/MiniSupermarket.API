@@ -153,6 +153,7 @@
             Name = "FormLogin";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Đăng nhập hệ thống";
+            Load += FormLogin_Load;
             groupBoxLogin.ResumeLayout(false);
             groupBoxLogin.PerformLayout();
             statusStrip1.ResumeLayout(false);

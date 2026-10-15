@@ -52,6 +52,7 @@
             dgvCategories.AllowUserToAddRows = false;
             dgvCategories.AllowUserToDeleteRows = false;
             dgvCategories.AllowUserToResizeRows = false;
+            dgvCategories.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvCategories.BackgroundColor = Color.White;
             dgvCategories.BorderStyle = BorderStyle.Fixed3D;
             dgvCategories.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
@@ -62,7 +63,7 @@
             dgvCategories.ReadOnly = true;
             dgvCategories.RowHeadersWidth = 40;
             dgvCategories.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvCategories.Size = new Size(549, 407);
+            dgvCategories.Size = new Size(858, 407);
             dgvCategories.TabIndex = 0;
             dgvCategories.CellClick += dgvCategories_CellClick;
             // 
@@ -72,7 +73,7 @@
             txtKeyword.Margin = new Padding(3, 4, 3, 4);
             txtKeyword.Name = "txtKeyword";
             txtKeyword.PlaceholderText = "Nhập từ khóa...";
-            txtKeyword.Size = new Size(502, 27);
+            txtKeyword.Size = new Size(580, 27);
             txtKeyword.TabIndex = 1;
             // 
             // txtDescription
@@ -82,7 +83,7 @@
             txtDescription.Multiline = true;
             txtDescription.Name = "txtDescription";
             txtDescription.ScrollBars = ScrollBars.Vertical;
-            txtDescription.Size = new Size(245, 92);
+            txtDescription.Size = new Size(305, 245);
             txtDescription.TabIndex = 5;
             // 
             // txtId
@@ -91,7 +92,7 @@
             txtId.Margin = new Padding(3, 4, 3, 4);
             txtId.Name = "txtId";
             txtId.ReadOnly = true;
-            txtId.Size = new Size(245, 27);
+            txtId.Size = new Size(305, 27);
             txtId.TabIndex = 1;
             // 
             // txtCategoryName
@@ -99,62 +100,82 @@
             txtCategoryName.Location = new Point(17, 147);
             txtCategoryName.Margin = new Padding(3, 4, 3, 4);
             txtCategoryName.Name = "txtCategoryName";
-            txtCategoryName.Size = new Size(245, 27);
+            txtCategoryName.Size = new Size(305, 27);
             txtCategoryName.TabIndex = 3;
             // 
             // btnSearch
             // 
-            btnSearch.Location = new Point(531, 28);
+            btnSearch.BackColor = Color.SteelBlue;
+            btnSearch.FlatStyle = FlatStyle.Flat;
+            btnSearch.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            btnSearch.ForeColor = Color.White;
+            btnSearch.Location = new Point(603, 28);
             btnSearch.Margin = new Padding(3, 4, 3, 4);
             btnSearch.Name = "btnSearch";
-            btnSearch.Size = new Size(114, 33);
+            btnSearch.Size = new Size(120, 33);
             btnSearch.TabIndex = 2;
             btnSearch.Text = "Tìm kiếm";
-            btnSearch.UseVisualStyleBackColor = true;
+            btnSearch.UseVisualStyleBackColor = false;
             btnSearch.Click += btnSearch_Click;
             // 
             // btnDelete
             // 
-            btnDelete.Location = new Point(189, 360);
+            btnDelete.BackColor = Color.IndianRed;
+            btnDelete.FlatStyle = FlatStyle.Flat;
+            btnDelete.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            btnDelete.ForeColor = Color.White;
+            btnDelete.Location = new Point(253, 480);
             btnDelete.Margin = new Padding(3, 4, 3, 4);
             btnDelete.Name = "btnDelete";
             btnDelete.Size = new Size(69, 40);
             btnDelete.TabIndex = 8;
             btnDelete.Text = "Xóa";
-            btnDelete.UseVisualStyleBackColor = true;
+            btnDelete.UseVisualStyleBackColor = false;
             btnDelete.Click += btnDelete_Click;
             // 
             // btnUpdate
             // 
-            btnUpdate.Location = new Point(97, 360);
+            btnUpdate.BackColor = Color.SteelBlue;
+            btnUpdate.FlatStyle = FlatStyle.Flat;
+            btnUpdate.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            btnUpdate.ForeColor = Color.White;
+            btnUpdate.Location = new Point(131, 480);
             btnUpdate.Margin = new Padding(3, 4, 3, 4);
             btnUpdate.Name = "btnUpdate";
-            btnUpdate.Size = new Size(86, 40);
+            btnUpdate.Size = new Size(116, 40);
             btnUpdate.TabIndex = 7;
             btnUpdate.Text = "Cập nhật";
-            btnUpdate.UseVisualStyleBackColor = true;
+            btnUpdate.UseVisualStyleBackColor = false;
             btnUpdate.Click += btnUpdate_Click;
             // 
             // btnAdd
             // 
-            btnAdd.Location = new Point(17, 360);
+            btnAdd.BackColor = Color.SeaGreen;
+            btnAdd.FlatStyle = FlatStyle.Flat;
+            btnAdd.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            btnAdd.ForeColor = Color.White;
+            btnAdd.Location = new Point(13, 480);
             btnAdd.Margin = new Padding(3, 4, 3, 4);
             btnAdd.Name = "btnAdd";
-            btnAdd.Size = new Size(74, 40);
+            btnAdd.Size = new Size(112, 40);
             btnAdd.TabIndex = 6;
             btnAdd.Text = "Thêm mới";
-            btnAdd.UseVisualStyleBackColor = true;
+            btnAdd.UseVisualStyleBackColor = false;
             btnAdd.Click += btnAdd_Click;
             // 
             // btnLoad
             // 
-            btnLoad.Location = new Point(657, 28);
+            btnLoad.BackColor = Color.SeaGreen;
+            btnLoad.FlatStyle = FlatStyle.Flat;
+            btnLoad.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            btnLoad.ForeColor = Color.White;
+            btnLoad.Location = new Point(724, 28);
             btnLoad.Margin = new Padding(3, 4, 3, 4);
             btnLoad.Name = "btnLoad";
-            btnLoad.Size = new Size(114, 33);
+            btnLoad.Size = new Size(120, 33);
             btnLoad.TabIndex = 3;
             btnLoad.Text = "Tải lại";
-            btnLoad.UseVisualStyleBackColor = true;
+            btnLoad.UseVisualStyleBackColor = false;
             btnLoad.Click += btnLoad_Click;
             // 
             // grpSearch
@@ -166,7 +187,7 @@
             grpSearch.Margin = new Padding(3, 4, 3, 4);
             grpSearch.Name = "grpSearch";
             grpSearch.Padding = new Padding(3, 4, 3, 4);
-            grpSearch.Size = new Size(869, 80);
+            grpSearch.Size = new Size(880, 80);
             grpSearch.TabIndex = 0;
             grpSearch.TabStop = false;
             grpSearch.Text = "Tìm kiếm";
@@ -178,7 +199,7 @@
             grpCategoryList.Margin = new Padding(3, 4, 3, 4);
             grpCategoryList.Name = "grpCategoryList";
             grpCategoryList.Padding = new Padding(3, 4, 3, 4);
-            grpCategoryList.Size = new Size(571, 460);
+            grpCategoryList.Size = new Size(880, 460);
             grpCategoryList.TabIndex = 4;
             grpCategoryList.TabStop = false;
             grpCategoryList.Text = "Danh sách Nhóm hàng";
@@ -195,11 +216,11 @@
             grpCategoryInfo.Controls.Add(btnAdd);
             grpCategoryInfo.Controls.Add(btnUpdate);
             grpCategoryInfo.Controls.Add(btnDelete);
-            grpCategoryInfo.Location = new Point(611, 113);
+            grpCategoryInfo.Location = new Point(931, 20);
             grpCategoryInfo.Margin = new Padding(3, 4, 3, 4);
             grpCategoryInfo.Name = "grpCategoryInfo";
             grpCategoryInfo.Padding = new Padding(3, 4, 3, 4);
-            grpCategoryInfo.Size = new Size(280, 460);
+            grpCategoryInfo.Size = new Size(338, 553);
             grpCategoryInfo.TabIndex = 5;
             grpCategoryInfo.TabStop = false;
             grpCategoryInfo.Text = "Thông tin Nhóm hàng";
@@ -235,7 +256,7 @@
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(914, 600);
+            ClientSize = new Size(1310, 751);
             Controls.Add(grpSearch);
             Controls.Add(grpCategoryList);
             Controls.Add(grpCategoryInfo);

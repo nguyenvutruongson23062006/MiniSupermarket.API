@@ -23,9 +23,10 @@ namespace MiniSupermarket.API.Controllers
         // ============================================================
         // 1. READ: Lấy toàn bộ danh sách nhóm hàng
         // GET /api/categories
-        // Admin và Cashier đều được phép xem
+        // Admin và Warehouse được phép xem
         // ============================================================
         [HttpGet]
+        [Authorize(Roles = "Admin,Warehouse")]
         public async Task<IActionResult> GetAll()
         {
             var danhSach = await _context.NhomHangs
@@ -38,9 +39,10 @@ namespace MiniSupermarket.API.Controllers
         // ============================================================
         // 2. READ: Lấy chi tiết một nhóm hàng theo mã
         // GET /api/categories/{id}
-        // Admin và Cashier đều được phép xem
+        // Admin và Warehouse được phép xem
         // ============================================================
         [HttpGet("{id}")]
+        [Authorize(Roles = "Admin,Warehouse")]
         public async Task<IActionResult> GetById(int id)
         {
             var nhomHang = await _context.NhomHangs
@@ -60,9 +62,10 @@ namespace MiniSupermarket.API.Controllers
         // ============================================================
         // 3. SEARCH: Tìm kiếm nhóm hàng
         // GET /api/categories/search?keyword=...
-        // Admin và Cashier đều được phép tìm kiếm
+        // Admin và Warehouse được phép tìm kiếm
         // ============================================================
         [HttpGet("search")]
+        [Authorize(Roles = "Admin,Warehouse")]
         public async Task<IActionResult> Search(
             [FromQuery] string keyword)
         {
@@ -86,10 +89,10 @@ namespace MiniSupermarket.API.Controllers
         // ============================================================
         // 4. CREATE: Thêm mới nhóm hàng
         // POST /api/categories
-        // CHỈ ADMIN được phép thêm
+        // Admin và Warehouse được phép thêm
         // ============================================================
         [HttpPost]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Warehouse")]
         public async Task<IActionResult> Create(
             [FromBody] NhomHang nhomHangMoi)
         {
@@ -117,10 +120,10 @@ namespace MiniSupermarket.API.Controllers
         // ============================================================
         // 5. UPDATE: Cập nhật thông tin nhóm hàng
         // PUT /api/categories/{id}
-        // CHỈ ADMIN được phép sửa
+        // Admin và Warehouse được phép sửa
         // ============================================================
         [HttpPut("{id}")]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Warehouse")]
         public async Task<IActionResult> Update(
             int id,
             [FromBody] NhomHang nhomHangCapNhat)
@@ -153,10 +156,10 @@ namespace MiniSupermarket.API.Controllers
         // ============================================================
         // 6. DELETE: Xóa nhóm hàng theo mã
         // DELETE /api/categories/{id}
-        // CHỈ ADMIN được phép xóa
+        // Admin và Warehouse được phép xóa
         // ============================================================
         [HttpDelete("{id}")]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Warehouse")]
         public async Task<IActionResult> Delete(int id)
         {
             var nhomHang = await _context.NhomHangs

@@ -26,7 +26,12 @@ namespace MiniSupermarket.API.Models
         [StringLength(100)]
         public string? HoTen { get; set; }
 
-        // Vai trò: Admin hoặc Cashier
+        // Email liên hệ của nhân viên
+        [EmailAddress]
+        [StringLength(100)]
+        public string? Email { get; set; }
+
+        // Vai trò: Admin, Cashier hoặc Warehouse
         [Required]
         [StringLength(50)]
         public string VaiTro { get; set; } = "Cashier";
