@@ -55,7 +55,7 @@ namespace MiniSupermarket.WinForms
             grpCustomerList.Controls.Add(dgvCustomers);
             grpCustomerList.Location = new Point(20, 110);
             grpCustomerList.Name = "grpCustomerList";
-            grpCustomerList.Size = new Size(700, 530);
+            grpCustomerList.Size = new Size(928, 530);
             grpCustomerList.TabIndex = 0;
             grpCustomerList.TabStop = false;
             grpCustomerList.Text = "Danh sách Khách hàng";
@@ -75,7 +75,7 @@ namespace MiniSupermarket.WinForms
             dgvCustomers.RowHeadersVisible = false;
             dgvCustomers.RowHeadersWidth = 51;
             dgvCustomers.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvCustomers.Size = new Size(680, 485);
+            dgvCustomers.Size = new Size(908, 485);
             dgvCustomers.TabIndex = 0;
             // 
             // grpCustomerInfo
@@ -93,9 +93,9 @@ namespace MiniSupermarket.WinForms
             grpCustomerInfo.Controls.Add(btnAdd);
             grpCustomerInfo.Controls.Add(btnUpdate);
             grpCustomerInfo.Controls.Add(btnDelete);
-            grpCustomerInfo.Location = new Point(740, 15);
+            grpCustomerInfo.Location = new Point(954, 15);
             grpCustomerInfo.Name = "grpCustomerInfo";
-            grpCustomerInfo.Size = new Size(330, 625);
+            grpCustomerInfo.Size = new Size(329, 625);
             grpCustomerInfo.TabIndex = 1;
             grpCustomerInfo.TabStop = false;
             grpCustomerInfo.Text = "Thông tin Khách hàng";
@@ -265,7 +265,7 @@ namespace MiniSupermarket.WinForms
             grpCustomerSearch.Controls.Add(btnLoad);
             grpCustomerSearch.Location = new Point(20, 15);
             grpCustomerSearch.Name = "grpCustomerSearch";
-            grpCustomerSearch.Size = new Size(700, 85);
+            grpCustomerSearch.Size = new Size(928, 85);
             grpCustomerSearch.TabIndex = 2;
             grpCustomerSearch.TabStop = false;
             grpCustomerSearch.Text = "Tìm kiếm Khách hàng";
@@ -274,7 +274,7 @@ namespace MiniSupermarket.WinForms
             // 
             txtKeyword.Location = new Point(15, 32);
             txtKeyword.Name = "txtKeyword";
-            txtKeyword.Size = new Size(390, 30);
+            txtKeyword.Size = new Size(644, 30);
             txtKeyword.TabIndex = 0;
             // 
             // btnSearch
@@ -284,7 +284,7 @@ namespace MiniSupermarket.WinForms
             btnSearch.FlatStyle = FlatStyle.Flat;
             btnSearch.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             btnSearch.ForeColor = Color.White;
-            btnSearch.Location = new Point(420, 30);
+            btnSearch.Location = new Point(693, 30);
             btnSearch.Name = "btnSearch";
             btnSearch.Size = new Size(100, 35);
             btnSearch.TabIndex = 1;
@@ -298,7 +298,7 @@ namespace MiniSupermarket.WinForms
             btnLoad.FlatStyle = FlatStyle.Flat;
             btnLoad.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             btnLoad.ForeColor = Color.White;
-            btnLoad.Location = new Point(535, 30);
+            btnLoad.Location = new Point(809, 30);
             btnLoad.Name = "btnLoad";
             btnLoad.Size = new Size(100, 35);
             btnLoad.TabIndex = 2;
@@ -311,7 +311,7 @@ namespace MiniSupermarket.WinForms
             AutoScaleMode = AutoScaleMode.Font;
             AutoScroll = true;
             BackColor = Color.WhiteSmoke;
-            ClientSize = new Size(1100, 700);
+            ClientSize = new Size(1320, 700);
             Controls.Add(grpCustomerSearch);
             Controls.Add(grpCustomerInfo);
             Controls.Add(grpCustomerList);

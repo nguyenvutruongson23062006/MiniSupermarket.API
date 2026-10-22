@@ -95,7 +95,7 @@
             btnAdd.FlatStyle = FlatStyle.Flat;
             btnAdd.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
             btnAdd.ForeColor = Color.White;
-            btnAdd.Location = new Point(359, 644);
+            btnAdd.Location = new Point(537, 644);
             btnAdd.Name = "btnAdd";
             btnAdd.Size = new Size(110, 38);
             btnAdd.TabIndex = 16;
@@ -109,7 +109,7 @@
             btnUpdate.FlatStyle = FlatStyle.Flat;
             btnUpdate.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
             btnUpdate.ForeColor = Color.White;
-            btnUpdate.Location = new Point(489, 644);
+            btnUpdate.Location = new Point(653, 644);
             btnUpdate.Name = "btnUpdate";
             btnUpdate.Size = new Size(110, 38);
             btnUpdate.TabIndex = 17;
@@ -122,7 +122,7 @@
             btnDelete.FlatStyle = FlatStyle.Flat;
             btnDelete.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
             btnDelete.ForeColor = Color.White;
-            btnDelete.Location = new Point(619, 644);
+            btnDelete.Location = new Point(769, 644);
             btnDelete.Name = "btnDelete";
             btnDelete.Size = new Size(110, 38);
             btnDelete.TabIndex = 18;
@@ -134,7 +134,7 @@
             grpProductList1.Controls.Add(dgvProducts);
             grpProductList1.Location = new Point(10, 91);
             grpProductList1.Name = "grpProductList1";
-            grpProductList1.Size = new Size(1060, 323);
+            grpProductList1.Size = new Size(1277, 323);
             grpProductList1.TabIndex = 19;
             grpProductList1.TabStop = false;
             grpProductList1.Text = "Danh sách sản phẩm";
@@ -154,7 +154,7 @@
             dgvProducts.RowHeadersVisible = false;
             dgvProducts.RowHeadersWidth = 51;
             dgvProducts.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvProducts.Size = new Size(1040, 278);
+            dgvProducts.Size = new Size(1257, 278);
             dgvProducts.TabIndex = 1;
             // 
             // grpProductList2
@@ -173,7 +173,7 @@
             grpProductList2.Controls.Add(lblProductId);
             grpProductList2.Location = new Point(9, 420);
             grpProductList2.Name = "grpProductList2";
-            grpProductList2.Size = new Size(1061, 218);
+            grpProductList2.Size = new Size(1278, 218);
             grpProductList2.TabIndex = 20;
             grpProductList2.TabStop = false;
             grpProductList2.Text = "Thông tin sản phẩm";
@@ -182,9 +182,9 @@
             // 
             cboCategory.DropDownStyle = ComboBoxStyle.DropDownList;
             cboCategory.FormattingEnabled = true;
-            cboCategory.Location = new Point(690, 144);
+            cboCategory.Location = new Point(793, 141);
             cboCategory.Name = "cboCategory";
-            cboCategory.Size = new Size(330, 31);
+            cboCategory.Size = new Size(432, 31);
             cboCategory.TabIndex = 27;
             // 
             // numStock
@@ -192,28 +192,29 @@
             numStock.Location = new Point(160, 144);
             numStock.Maximum = new decimal(new int[] { 1000000, 0, 0, 0 });
             numStock.Name = "numStock";
-            numStock.Size = new Size(330, 30);
+            numStock.Size = new Size(430, 30);
             numStock.TabIndex = 26;
             numStock.ThousandsSeparator = true;
             // 
             // numPrice
             // 
             numPrice.DecimalPlaces = 2;
-            numPrice.Location = new Point(690, 94);
+            numPrice.Location = new Point(793, 92);
             numPrice.Maximum = new decimal(new int[] { 1000000000, 0, 0, 0 });
             numPrice.Name = "numPrice";
-            numPrice.Size = new Size(330, 30);
+            numPrice.Size = new Size(432, 30);
             numPrice.TabIndex = 25;
             numPrice.ThousandsSeparator = true;
             // 
             // lblCategory
             // 
             lblCategory.AutoSize = true;
-            lblCategory.Location = new Point(560, 149);
+            lblCategory.Location = new Point(644, 146);
             lblCategory.Name = "lblCategory";
             lblCategory.Size = new Size(106, 23);
             lblCategory.TabIndex = 24;
             lblCategory.Text = "Nhóm hàng:";
+            lblCategory.Click += lblCategory_Click;
             // 
             // lblStock
             // 
@@ -227,7 +228,7 @@
             // lblPrice
             // 
             lblPrice.AutoSize = true;
-            lblPrice.Location = new Point(560, 99);
+            lblPrice.Location = new Point(647, 101);
             lblPrice.Name = "lblPrice";
             lblPrice.Size = new Size(73, 23);
             lblPrice.TabIndex = 22;
@@ -237,14 +238,14 @@
             // 
             txtProductName.Location = new Point(160, 94);
             txtProductName.Name = "txtProductName";
-            txtProductName.Size = new Size(330, 30);
+            txtProductName.Size = new Size(430, 30);
             txtProductName.TabIndex = 21;
             // 
             // txtBarcode
             // 
-            txtBarcode.Location = new Point(690, 44);
+            txtBarcode.Location = new Point(793, 44);
             txtBarcode.Name = "txtBarcode";
-            txtBarcode.Size = new Size(330, 30);
+            txtBarcode.Size = new Size(432, 30);
             txtBarcode.TabIndex = 20;
             // 
             // txtProductId
@@ -252,7 +253,7 @@
             txtProductId.Location = new Point(160, 44);
             txtProductId.Name = "txtProductId";
             txtProductId.ReadOnly = true;
-            txtProductId.Size = new Size(330, 30);
+            txtProductId.Size = new Size(430, 30);
             txtProductId.TabIndex = 19;
             // 
             // lblProductName
@@ -267,7 +268,7 @@
             // lblBarcode
             // 
             lblBarcode.AutoSize = true;
-            lblBarcode.Location = new Point(560, 49);
+            lblBarcode.Location = new Point(647, 51);
             lblBarcode.Name = "lblBarcode";
             lblBarcode.Size = new Size(78, 23);
             lblBarcode.TabIndex = 17;

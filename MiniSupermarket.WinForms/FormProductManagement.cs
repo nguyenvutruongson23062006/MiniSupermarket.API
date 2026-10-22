@@ -452,6 +452,11 @@ namespace MiniSupermarket.WinForms
         {
 
         }
+
+        private void lblCategory_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 
     // Dữ liệu sản phẩm trả về từ API
