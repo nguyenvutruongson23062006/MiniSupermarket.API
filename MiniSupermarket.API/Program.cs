@@ -6,6 +6,7 @@ using MiniSupermarket.API.Data;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddScoped<MiniSupermarket.API.Services.AdoCheckoutService>();
 
 // Lấy chuỗi kết nối SQL Server từ appsettings.json
 var connectionString =
@@ -66,6 +67,14 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 var app = builder.Build();
+
+if (builder.Configuration.GetValue<bool>("Buoi5:DuLieuBaiGiang"))
+{
+    if (!app.Environment.IsDevelopment())
+        throw new InvalidOperationException("Chỉ bật dữ liệu Buổi 5 trong môi trường Development.");
+    using var scope = app.Services.CreateScope();
+    await Buoi5LectureData.InitializeAsync(scope.ServiceProvider.GetRequiredService<SupermarketDbContext>());
+}
 
 // Cấu hình middleware
 if (app.Environment.IsDevelopment())

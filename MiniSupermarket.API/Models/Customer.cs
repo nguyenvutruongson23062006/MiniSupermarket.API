@@ -33,6 +33,9 @@ namespace MiniSupermarket.API.Models
         [StringLength(500)]
         public string DiaChi { get; set; } = string.Empty;
 
+        // Điểm tích lũy: mỗi 10.000 đồng thanh toán được 1 điểm.
+        public int DiemTichLuy { get; set; }
+
         // Danh sách đơn hàng của khách hàng
         public virtual ICollection<DonHang>? DonHangs { get; set; }
     }

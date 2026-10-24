@@ -244,6 +244,13 @@ namespace MiniSupermarket.API.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MaDonHang"));
 
+                    b.Property<int>("DiemThuong")
+                        .HasColumnType("int");
+
+                    b.Property<string>("MaHoaDon")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
                     b.Property<int?>("MaKhachHang")
                         .HasColumnType("int");
 
@@ -252,6 +259,9 @@ namespace MiniSupermarket.API.Migrations
 
                     b.Property<DateTime>("NgayDatHang")
                         .HasColumnType("datetime2");
+
+                    b.Property<int>("TongSoLuong")
+                        .HasColumnType("int");
 
                     b.Property<decimal>("TongTien")
                         .HasColumnType("decimal(18,2)");
@@ -273,90 +283,110 @@ namespace MiniSupermarket.API.Migrations
                         new
                         {
                             MaDonHang = 1,
+                            DiemThuong = 0,
                             MaKhachHang = 1,
                             MaNguoiDung = 1,
                             NgayDatHang = new DateTime(2026, 10, 1, 9, 0, 0, 0, DateTimeKind.Unspecified),
+                            TongSoLuong = 0,
                             TongTien = 205000m,
                             TrangThai = "Completed"
                         },
                         new
                         {
                             MaDonHang = 2,
+                            DiemThuong = 0,
                             MaKhachHang = 2,
                             MaNguoiDung = 2,
                             NgayDatHang = new DateTime(2026, 10, 1, 10, 0, 0, 0, DateTimeKind.Unspecified),
+                            TongSoLuong = 0,
                             TongTien = 115000m,
                             TrangThai = "Completed"
                         },
                         new
                         {
                             MaDonHang = 3,
+                            DiemThuong = 0,
                             MaKhachHang = 3,
                             MaNguoiDung = 2,
                             NgayDatHang = new DateTime(2026, 10, 2, 11, 0, 0, 0, DateTimeKind.Unspecified),
+                            TongSoLuong = 0,
                             TongTien = 165000m,
                             TrangThai = "Completed"
                         },
                         new
                         {
                             MaDonHang = 4,
+                            DiemThuong = 0,
                             MaKhachHang = 4,
                             MaNguoiDung = 3,
                             NgayDatHang = new DateTime(2026, 10, 2, 14, 0, 0, 0, DateTimeKind.Unspecified),
+                            TongSoLuong = 0,
                             TongTien = 95000m,
                             TrangThai = "Completed"
                         },
                         new
                         {
                             MaDonHang = 5,
+                            DiemThuong = 0,
                             MaKhachHang = 5,
                             MaNguoiDung = 1,
                             NgayDatHang = new DateTime(2026, 10, 3, 9, 30, 0, 0, DateTimeKind.Unspecified),
+                            TongSoLuong = 0,
                             TongTien = 110000m,
                             TrangThai = "Completed"
                         },
                         new
                         {
                             MaDonHang = 6,
+                            DiemThuong = 0,
                             MaKhachHang = 1,
                             MaNguoiDung = 2,
                             NgayDatHang = new DateTime(2026, 10, 3, 13, 0, 0, 0, DateTimeKind.Unspecified),
+                            TongSoLuong = 0,
                             TongTien = 88000m,
                             TrangThai = "Completed"
                         },
                         new
                         {
                             MaDonHang = 7,
+                            DiemThuong = 0,
                             MaKhachHang = 2,
                             MaNguoiDung = 3,
                             NgayDatHang = new DateTime(2026, 10, 4, 10, 30, 0, 0, DateTimeKind.Unspecified),
+                            TongSoLuong = 0,
                             TongTien = 170000m,
                             TrangThai = "Completed"
                         },
                         new
                         {
                             MaDonHang = 8,
+                            DiemThuong = 0,
                             MaKhachHang = 3,
                             MaNguoiDung = 1,
                             NgayDatHang = new DateTime(2026, 10, 5, 15, 0, 0, 0, DateTimeKind.Unspecified),
+                            TongSoLuong = 0,
                             TongTien = 165000m,
                             TrangThai = "Completed"
                         },
                         new
                         {
                             MaDonHang = 9,
+                            DiemThuong = 0,
                             MaKhachHang = 4,
                             MaNguoiDung = 2,
                             NgayDatHang = new DateTime(2026, 10, 6, 16, 0, 0, 0, DateTimeKind.Unspecified),
+                            TongSoLuong = 0,
                             TongTien = 185000m,
                             TrangThai = "Completed"
                         },
                         new
                         {
                             MaDonHang = 10,
+                            DiemThuong = 0,
                             MaKhachHang = 5,
                             MaNguoiDung = 3,
                             NgayDatHang = new DateTime(2026, 10, 7, 17, 0, 0, 0, DateTimeKind.Unspecified),
+                            TongSoLuong = 0,
                             TongTien = 195000m,
                             TrangThai = "Completed"
                         });
@@ -374,6 +404,9 @@ namespace MiniSupermarket.API.Migrations
                         .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
+
+                    b.Property<int>("DiemTichLuy")
+                        .HasColumnType("int");
 
                     b.Property<string>("Email")
                         .HasMaxLength(100)
@@ -401,6 +434,7 @@ namespace MiniSupermarket.API.Migrations
                         {
                             MaKhachHang = 1,
                             DiaChi = "25, đường Nguyễn Văn Cừ, phường Nguyễn Cư Trinh, quận 1, Thành phố Hồ Chí Minh",
+                            DiemTichLuy = 0,
                             Email = "nguyenvanan@gmail.com",
                             HoTen = "Nguyễn Văn An",
                             SoDienThoai = "0900000001"
@@ -409,6 +443,7 @@ namespace MiniSupermarket.API.Migrations
                         {
                             MaKhachHang = 2,
                             DiaChi = "18, đường Lê Lợi, phường Bến Nghé, quận 1, Thành phố Hồ Chí Minh",
+                            DiemTichLuy = 0,
                             Email = "tranthibinh@gmail.com",
                             HoTen = "Trần Thị Bình",
                             SoDienThoai = "0900000002"
@@ -417,6 +452,7 @@ namespace MiniSupermarket.API.Migrations
                         {
                             MaKhachHang = 3,
                             DiaChi = "42, đường Phạm Văn Đồng, phường Hiệp Bình Chánh, thành phố Thủ Đức, Thành phố Hồ Chí Minh",
+                            DiemTichLuy = 0,
                             Email = "levancuong@gmail.com",
                             HoTen = "Lê Văn Cường",
                             SoDienThoai = "0900000003"
@@ -425,6 +461,7 @@ namespace MiniSupermarket.API.Migrations
                         {
                             MaKhachHang = 4,
                             DiaChi = "76, đường Đồng Khởi, phường Bến Nghé, quận 1, Thành phố Hồ Chí Minh",
+                            DiemTichLuy = 0,
                             Email = "phamthidung@gmail.com",
                             HoTen = "Phạm Thị Dung",
                             SoDienThoai = "0900000004"
@@ -433,6 +470,7 @@ namespace MiniSupermarket.API.Migrations
                         {
                             MaKhachHang = 5,
                             DiaChi = "12, đường Nguyễn Trãi, phường Bến Thành, quận 1, Thành phố Hồ Chí Minh",
+                            DiemTichLuy = 0,
                             Email = "hoangvanminh@gmail.com",
                             HoTen = "Hoàng Văn Minh",
                             SoDienThoai = "0900000005"
@@ -441,6 +479,7 @@ namespace MiniSupermarket.API.Migrations
                         {
                             MaKhachHang = 6,
                             DiaChi = "35, đường Nguyễn Huệ, phường Bến Nghé, quận 1, Thành phố Hồ Chí Minh",
+                            DiemTichLuy = 0,
                             Email = "nguyenthilan@gmail.com",
                             HoTen = "Nguyễn Thị Lan",
                             SoDienThoai = "0900000006"
@@ -449,6 +488,7 @@ namespace MiniSupermarket.API.Migrations
                         {
                             MaKhachHang = 7,
                             DiaChi = "89, đường Xô Viết Nghệ Tĩnh, phường 21, quận Bình Thạnh, Thành phố Hồ Chí Minh",
+                            DiemTichLuy = 0,
                             Email = "tranvanhung@gmail.com",
                             HoTen = "Trần Văn Hùng",
                             SoDienThoai = "0900000007"
@@ -457,6 +497,7 @@ namespace MiniSupermarket.API.Migrations
                         {
                             MaKhachHang = 8,
                             DiaChi = "56, đường Võ Văn Ngân, phường Linh Chiểu, thành phố Thủ Đức, Thành phố Hồ Chí Minh",
+                            DiemTichLuy = 0,
                             Email = "lethimai@gmail.com",
                             HoTen = "Lê Thị Mai",
                             SoDienThoai = "0900000008"
@@ -465,6 +506,7 @@ namespace MiniSupermarket.API.Migrations
                         {
                             MaKhachHang = 9,
                             DiaChi = "23, đường Nguyễn Văn Linh, phường Tân Phong, quận 7, Thành phố Hồ Chí Minh",
+                            DiemTichLuy = 0,
                             Email = "phamvannam@gmail.com",
                             HoTen = "Phạm Văn Nam",
                             SoDienThoai = "0900000009"
@@ -473,6 +515,7 @@ namespace MiniSupermarket.API.Migrations
                         {
                             MaKhachHang = 10,
                             DiaChi = "101, đường Cách Mạng Tháng Tám, phường 7, quận 3, Thành phố Hồ Chí Minh",
+                            DiemTichLuy = 0,
                             Email = "hoangthihoa@gmail.com",
                             HoTen = "Hoàng Thị Hoa",
                             SoDienThoai = "0900000010"
@@ -481,6 +524,7 @@ namespace MiniSupermarket.API.Migrations
                         {
                             MaKhachHang = 11,
                             DiaChi = "64, đường Lê Văn Việt, phường Tăng Nhơn Phú A, thành phố Thủ Đức, Thành phố Hồ Chí Minh",
+                            DiemTichLuy = 0,
                             Email = "dovanthanh@gmail.com",
                             HoTen = "Đỗ Văn Thành",
                             SoDienThoai = "0900000011"
@@ -489,6 +533,7 @@ namespace MiniSupermarket.API.Migrations
                         {
                             MaKhachHang = 12,
                             DiaChi = "28, đường Hoàng Văn Thụ, phường 4, quận Tân Bình, Thành phố Hồ Chí Minh",
+                            DiemTichLuy = 0,
                             Email = "vuthihuong@gmail.com",
                             HoTen = "Vũ Thị Hương",
                             SoDienThoai = "0900000012"
@@ -497,6 +542,7 @@ namespace MiniSupermarket.API.Migrations
                         {
                             MaKhachHang = 13,
                             DiaChi = "45, đường Trần Hưng Đạo, phường Phú Cường, thành phố Thủ Dầu Một, tỉnh Bình Dương",
+                            DiemTichLuy = 0,
                             Email = "nguyenvanlong@gmail.com",
                             HoTen = "Nguyễn Văn Long",
                             SoDienThoai = "0900000013"
@@ -505,6 +551,7 @@ namespace MiniSupermarket.API.Migrations
                         {
                             MaKhachHang = 14,
                             DiaChi = "73, đường Điện Biên Phủ, phường Đa Kao, quận 1, Thành phố Hồ Chí Minh",
+                            DiemTichLuy = 0,
                             Email = "tranthingoc@gmail.com",
                             HoTen = "Trần Thị Ngọc",
                             SoDienThoai = "0900000014"
@@ -513,6 +560,7 @@ namespace MiniSupermarket.API.Migrations
                         {
                             MaKhachHang = 15,
                             DiaChi = "19, đường Nguyễn Tất Thành, phường Phước Nguyên, thành phố Bà Rịa, tỉnh Bà Rịa - Vũng Tàu",
+                            DiemTichLuy = 0,
                             Email = "levanphuc@gmail.com",
                             HoTen = "Lê Văn Phúc",
                             SoDienThoai = "0900000015"

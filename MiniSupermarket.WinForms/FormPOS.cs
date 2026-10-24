@@ -1,4 +1,4 @@
-using System.Net;
+﻿using System.Net;
 using System.Net.Http.Json;
 
 namespace MiniSupermarket.WinForms
@@ -165,7 +165,7 @@ namespace MiniSupermarket.WinForms
             {
                 using var request = ApiClientService.CreateRequest(
                     HttpMethod.Get,
-                    $"products/barcode/{Uri.EscapeDataString(barcode)}");
+                    $"ado-products/barcode/{Uri.EscapeDataString(barcode)}");
 
                 using var response =
                     await ApiClientService.Client.SendAsync(request);
@@ -184,7 +184,7 @@ namespace MiniSupermarket.WinForms
                     return;
 
                 var product = await response.Content
-                    .ReadFromJsonAsync<ProductDto>();
+                    .ReadFromJsonAsync<AdoPosProductDto>();
 
                 if (product == null)
                 {
@@ -193,15 +193,15 @@ namespace MiniSupermarket.WinForms
                 }
 
                 var existing = _cart.FirstOrDefault(x =>
-                    x.MaSanPham == product.MaSanPham);
+                    x.MaSanPham == product.ProductId);
 
                 if (existing != null)
                 {
-                    if (existing.SoLuong >= product.SoLuongTon)
+                    if (existing.SoLuong >= product.StockQuantity)
                     {
                         MessageBox.Show(
-                            $"'{product.TenSanPham}' chỉ còn " +
-                            $"{product.SoLuongTon} sản phẩm trong kho.",
+                            $"'{product.ProductName}' chỉ còn " +
+                            $"{product.StockQuantity} sản phẩm trong kho.",
                             "Không đủ tồn kho",
                             MessageBoxButtons.OK,
                             MessageBoxIcon.Warning);
@@ -212,7 +212,7 @@ namespace MiniSupermarket.WinForms
                 }
                 else
                 {
-                    if (product.SoLuongTon <= 0)
+                    if (product.StockQuantity <= 0)
                     {
                         MessageBox.Show(
                             "Sản phẩm đã hết hàng.",
@@ -224,12 +224,12 @@ namespace MiniSupermarket.WinForms
 
                     _cart.Add(new PosCartItem
                     {
-                        MaSanPham = product.MaSanPham,
-                        MaVach = product.MaVach,
-                        TenSanPham = product.TenSanPham,
-                        DonGia = product.GiaBan,
+                        MaSanPham = product.ProductId,
+                        MaVach = product.Barcode,
+                        TenSanPham = product.ProductName,
+                        DonGia = product.Price,
                         SoLuong = 1,
-                        SoLuongTon = product.SoLuongTon
+                        SoLuongTon = product.StockQuantity
                     });
                 }
 
@@ -321,6 +321,8 @@ namespace MiniSupermarket.WinForms
 
         private async Task CheckoutAsync()
         {
+            if (!btnCheckout.Enabled) return;
+
             if (_cart.Count == 0)
             {
                 MessageBox.Show(
@@ -349,14 +351,15 @@ namespace MiniSupermarket.WinForms
 
             var checkoutData = new
             {
-                MaKhachHang = _selectedCustomerId,
-                SoDienThoaiKhachHang = _selectedCustomerId.HasValue
+                CustomerId = _selectedCustomerId,
+                CustomerPhone = _selectedCustomerId.HasValue
                     ? null
                     : NullIfEmpty(txtCustomerPhone.Text),
-                SanPhams = _cart.Select(x => new
+                Items = _cart.Select(x => new
                 {
-                    x.MaSanPham,
-                    x.SoLuong
+                    ProductId = x.MaSanPham,
+                    Quantity = x.SoLuong,
+                    UnitPrice = x.DonGia
                 }).ToList()
             };
 
@@ -366,7 +369,7 @@ namespace MiniSupermarket.WinForms
 
                 using var request = ApiClientService.CreateRequest(
                     HttpMethod.Post,
-                    "orders/checkout");
+                    "checkout");
                 request.Content = JsonContent.Create(checkoutData);
 
                 using var response =
@@ -380,8 +383,8 @@ namespace MiniSupermarket.WinForms
 
                 MessageBox.Show(
                     "Thanh toán thành công!\n" +
-                    $"Mã hóa đơn: {result?.MaDonHang}\n" +
-                    $"Tổng tiền: {total:N0} đ\n" +
+                    $"Mã hóa đơn: {result?.OrderCode}\n" +
+                    $"Tổng tiền: {result?.FinalAmount:N0} đ\n" +
                     $"Tiền thừa: {cashReceived - total:N0} đ",
                     "Hoàn tất",
                     MessageBoxButtons.OK,
@@ -512,9 +515,20 @@ namespace MiniSupermarket.WinForms
         public decimal ThanhTien => DonGia * SoLuong;
     }
 
+    public class AdoPosProductDto
+    {
+        public int ProductId { get; set; }
+        public string Barcode { get; set; } = string.Empty;
+        public string ProductName { get; set; } = string.Empty;
+        public decimal Price { get; set; }
+        public int StockQuantity { get; set; }
+    }
+
     public class CheckoutResultDto
     {
-        public int MaDonHang { get; set; }
-        public decimal TongTien { get; set; }
+        public int OrderId { get; set; }
+        public string OrderCode { get; set; } = string.Empty;
+        public decimal FinalAmount { get; set; }
+        public int RewardPointsAdded { get; set; }
     }
 }
