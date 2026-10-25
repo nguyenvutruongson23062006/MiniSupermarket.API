@@ -1,4 +1,4 @@
-﻿using System.Net;
+using System.Net;
 using System.Net.Http.Json;
 
 namespace MiniSupermarket.WinForms
@@ -45,16 +45,17 @@ namespace MiniSupermarket.WinForms
             UpdateButtons();
         }
 
-        // Dùng lại các control Designer, bố trí co giãn theo vùng nội dung của shell.
+        // Bố trí co giãn cân đối theo vùng nội dung của shell, giúp 5 dòng sản phẩm hiển thị rộng rãi
         private void ConfigureLayout()
         {
             SuspendLayout();
             AutoScroll = false;
             var layout = new TableLayoutPanel { Dock = DockStyle.Fill, ColumnCount = 1, RowCount = 4, Padding = new Padding(12) };
             layout.RowStyles.Add(new RowStyle(SizeType.Absolute, 46));
-            layout.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
+            layout.RowStyles.Add(new RowStyle(SizeType.Percent, 55));
             layout.RowStyles.Add(new RowStyle(SizeType.Absolute, 44));
-            layout.RowStyles.Add(new RowStyle(SizeType.Absolute, 215));
+            layout.RowStyles.Add(new RowStyle(SizeType.Percent, 45));
+
             var search = new TableLayoutPanel { Dock = DockStyle.Fill, ColumnCount = 4, RowCount = 1 };
             search.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
             search.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 100));
@@ -66,20 +67,27 @@ namespace MiniSupermarket.WinForms
             search.Controls.Add(btnSearch, 1, 0);
             search.Controls.Add(btnLoad, 2, 0);
             search.Controls.Add(cboCategoryFilter, 3, 0);
+
             var pager = new FlowLayoutPanel { Dock = DockStyle.Fill, WrapContents = false };
+            lblPaging.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            btnPrev.Font = btnNext.Font = new Font("Segoe UI", 9.5F);
+            btnPrev.Cursor = btnNext.Cursor = Cursors.Hand;
             pager.Controls.AddRange([btnPrev, lblPaging, btnNext]);
+
             grpProductList1.Dock = DockStyle.Fill;
             dgvProducts.Dock = DockStyle.Fill;
             grpProductList1.Padding = new Padding(8, 22, 8, 8);
+
             grpProductList2.Dock = DockStyle.Fill;
             grpProductList2.Controls.Clear();
             var editor = new TableLayoutPanel { Dock = DockStyle.Fill, ColumnCount = 4, RowCount = 4, Padding = new Padding(6) };
-            editor.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 115));
+            editor.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 120));
             editor.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50));
-            editor.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 100));
+            editor.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 110));
             editor.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50));
-            for (int row = 0; row < 3; row++) editor.RowStyles.Add(new RowStyle(SizeType.Absolute, 40));
+            for (int row = 0; row < 3; row++) editor.RowStyles.Add(new RowStyle(SizeType.Absolute, 42));
             editor.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
+
             Control[] labels = [lblProductId, lblBarcode, lblProductName, lblPrice, lblStock, lblCategory];
             Control[] inputs = [txtProductId, txtBarcode, txtProductName, numPrice, numStock, cboCategory];
             for (int i = 0; i < inputs.Length; i++)
@@ -90,16 +98,20 @@ namespace MiniSupermarket.WinForms
                 editor.Controls.Add(labels[i], col, row);
                 editor.Controls.Add(inputs[i], col + 1, row);
             }
+
             var actions = new FlowLayoutPanel { Dock = DockStyle.Fill, WrapContents = false };
             foreach (var button in new[] { btnAdd, btnUpdate, btnDelete })
             {
                 button.AutoSize = true;
-                button.Margin = new Padding(4);
+                button.Margin = new Padding(6, 6, 6, 6);
+                button.Padding = new Padding(8, 4, 8, 4);
+                button.Cursor = Cursors.Hand;
                 actions.Controls.Add(button);
             }
             editor.Controls.Add(actions, 0, 3);
             editor.SetColumnSpan(actions, 4);
             grpProductList2.Controls.Add(editor);
+
             Controls.Clear();
             layout.Controls.Add(search, 0, 0);
             layout.Controls.Add(grpProductList1, 0, 1);
@@ -121,7 +133,31 @@ namespace MiniSupermarket.WinForms
             AddColumn("TenNhomHang", "Nhóm hàng");
             dgvProducts.Columns["TenSanPham"].FillWeight = 180;
             dgvProducts.Columns["GiaBan"].DefaultCellStyle.Format = "N0";
+
+            // Căn chỉnh giao diện bảng to rõ, dễ nhìn
+            dgvProducts.ColumnHeadersHeight = 40;
+            dgvProducts.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+            dgvProducts.DefaultCellStyle.Font = new Font("Segoe UI", 10.5f);
+            dgvProducts.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dgvProducts.DefaultCellStyle.Padding = new Padding(6, 2, 6, 2);
+            dgvProducts.RowTemplate.Height = 44;
+            dgvProducts.Resize += (_, _) => AdjustRowHeights(dgvProducts, PageSize);
             dgvProducts.DataSource = _productsSource;
+        }
+
+        // Tự động phân bổ chiều cao của 5 dòng cho vừa khít và đẹp mắt trong bảng
+        public static void AdjustRowHeights(DataGridView dgv, int targetRowCount)
+        {
+            if (dgv.Rows.Count == 0) return;
+            int availableHeight = dgv.ClientSize.Height - dgv.ColumnHeadersHeight - 2;
+            if (availableHeight <= 0) return;
+            int count = Math.Max(1, Math.Min(targetRowCount, dgv.Rows.Count));
+            int calculatedHeight = availableHeight / count;
+            int rowHeight = Math.Max(38, Math.Min(calculatedHeight, 56));
+            foreach (DataGridViewRow row in dgv.Rows)
+            {
+                row.Height = rowHeight;
+            }
         }
 
         private void AddColumn(string property, string title) =>
@@ -152,10 +188,22 @@ namespace MiniSupermarket.WinForms
             string message = response.StatusCode switch
             {
                 HttpStatusCode.Unauthorized => "Phiên đăng nhập không hợp lệ hoặc đã hết hạn.",
-                HttpStatusCode.Forbidden => "Bạn không có quyền thực hiện chức năng này.",
-                _ => await response.Content.ReadAsStringAsync()
+                HttpStatusCode.Forbidden => "Bạn không có quyền thực hiện thao tác này.",
+                HttpStatusCode.NotFound => "Không tìm thấy dữ liệu yêu cầu.",
+                HttpStatusCode.Conflict => "Dữ liệu bị trùng hoặc đang được sử dụng ở chức năng khác.",
+                _ => $"Thao tác thất bại ({(int)response.StatusCode})."
             };
-            MessageBox.Show(message, $"Lỗi HTTP {(int)response.StatusCode}", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            try
+            {
+                var body = await response.Content.ReadAsStringAsync();
+                if (!string.IsNullOrWhiteSpace(body) && body.TrimStart().StartsWith("{"))
+                {
+                    using var doc = System.Text.Json.JsonDocument.Parse(body);
+                    if (doc.RootElement.TryGetProperty("message", out var msg)) message = msg.GetString() ?? message;
+                }
+            }
+            catch { }
+            MessageBox.Show(message, "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             return false;
         }
 
@@ -187,16 +235,15 @@ namespace MiniSupermarket.WinForms
 
         private async Task LoadProductsAsync(int page)
         {
-            if (_busy || IsDisposed) return;
+            if (_busy) return;
             _busy = true;
             UpdateButtons();
             try
             {
-                page = Math.Max(1, page);
-                string keyword = Uri.EscapeDataString(txtKeyword.Text.Trim());
-                int category = cboCategoryFilter.SelectedValue is int id ? id : 0;
                 async Task<PagedViewResult<ProductItemViewDto>?> Fetch(int number)
                 {
+                    string keyword = Uri.EscapeDataString(txtKeyword.Text.Trim());
+                    int category = cboCategoryFilter.SelectedValue is int id ? id : 0;
                     using var response = await SendAsync(HttpMethod.Get,
                         $"products/paged?keyword={keyword}&categoryId={category}&pageNumber={number}&pageSize={PageSize}");
                     if (!await CheckResponseAsync(response)) return null;
@@ -217,6 +264,7 @@ namespace MiniSupermarket.WinForms
                     GiaBan = p.Price, SoLuongTon = p.StockQuantity,
                     MaNhomHang = p.CategoryId, TenNhomHang = p.CategoryName
                 }).ToList();
+                AdjustRowHeights(dgvProducts, PageSize);
                 dgvProducts.ClearSelection();
                 ClearInputs();
                 lblPaging.Text = $"Trang {(_totalPages == 0 ? 0 : _currentPage)} / {_totalPages} (Tổng: {result.TotalItems} SP)";

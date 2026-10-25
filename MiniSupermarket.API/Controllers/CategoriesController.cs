@@ -21,6 +21,59 @@ namespace MiniSupermarket.API.Controllers
         }
 
         // ============================================================
+        // 0. PAGING: Phân trang nhóm hàng trên máy chủ bằng LINQ Skip & Take
+        // GET /api/categories/paged?keyword=...&pageNumber=1&pageSize=5
+        // Admin và Warehouse được phép xem
+        // ============================================================
+        [HttpGet("paged")]
+        [Authorize(Roles = "Admin,Warehouse")]
+        public async Task<ActionResult<PagedResult<CategoryDto>>> GetPagedCategories(
+            [FromQuery] string? keyword,
+            [FromQuery] int pageNumber = 1,
+            [FromQuery] int pageSize = 5,
+            CancellationToken cancellationToken = default)
+        {
+            pageNumber = Math.Max(1, pageNumber);
+            if (pageSize < 1 || pageSize > 50) pageSize = 5;
+
+            var query = _context.NhomHangs
+                .AsNoTracking()
+                .AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(keyword))
+            {
+                string search = keyword.Trim().ToLower();
+                query = query.Where(c => c.TenNhomHang.ToLower().Contains(search)
+                    || (c.MoTa != null && c.MoTa.ToLower().Contains(search)));
+            }
+
+            int totalItems = await query.CountAsync(cancellationToken);
+            int totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
+
+            long offset = (long)(pageNumber - 1) * pageSize;
+            var items = offset > int.MaxValue ? new List<CategoryDto>() : await query
+                .OrderBy(c => c.MaNhomHang)
+                .Skip((int)offset)
+                .Take(pageSize)
+                .Select(c => new CategoryDto
+                {
+                    MaNhomHang = c.MaNhomHang,
+                    TenNhomHang = c.TenNhomHang,
+                    MoTa = c.MoTa
+                })
+                .ToListAsync(cancellationToken);
+
+            return Ok(new PagedResult<CategoryDto>
+            {
+                CurrentPage = pageNumber,
+                PageSize = pageSize,
+                TotalItems = totalItems,
+                TotalPages = totalPages,
+                Items = items
+            });
+        }
+
+        // ============================================================
         // 1. READ: Lấy toàn bộ danh sách nhóm hàng (Trả về DTO)
         // GET /api/categories
         // Admin và Warehouse được phép xem
