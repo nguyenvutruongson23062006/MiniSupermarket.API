@@ -14,17 +14,37 @@ public class AdoProductController(IConfiguration configuration) : ControllerBase
     private const string Columns = "MaSanPham AS ProductId, MaVach AS Barcode, TenSanPham AS ProductName, GiaBan AS Price, SoLuongTon AS StockQuantity";
     private SqlConnection Connection() => new(configuration.GetConnectionString("DefaultConnection"));
 
-    // Connected: đọc từng dòng khi kết nối còn mở.
+    // Connected: Đọc trực tiếp bằng SqlDataReader và SqlCommand, dùng Parameters.AddWithValue chống SQL Injection
     [HttpGet("barcode/{barcode}")]
     public async Task<IActionResult> Barcode(string barcode, CancellationToken ct)
     {
         if (string.IsNullOrWhiteSpace(barcode) || barcode.Length > 50)
             return BadRequest(new { message = "Mã vạch phải có từ 1 đến 50 ký tự." });
-        var rows = await ReadAsync($"SELECT {Columns} FROM SanPham WHERE MaVach=@Barcode",
-            new SqlParameter("@Barcode", SqlDbType.NVarChar, 50) { Value = barcode.Trim() }, ct);
-        return rows.Count == 0
-            ? NotFound(new { message = "Không tìm thấy mã vạch." })
-            : Ok(rows[0]);
+
+        await using var connection = Connection();
+        using var command = new SqlCommand(
+            $"SELECT {Columns} FROM SanPham WHERE MaVach = @Barcode", connection);
+
+        // Chống tấn công SQL Injection bằng Parameters.AddWithValue
+        command.Parameters.AddWithValue("@Barcode", barcode.Trim());
+
+        await connection.OpenAsync(ct);
+
+        // Đọc dữ liệu bằng SqlDataReader bọc trong using an toàn
+        await using var reader = await command.ExecuteReaderAsync(ct);
+        if (!await reader.ReadAsync(ct))
+        {
+            return NotFound(new { message = "Không tìm thấy mã vạch." });
+        }
+
+        var product = new ProductLookupDto(
+            reader.GetInt32(0),
+            reader.GetString(1),
+            reader.GetString(2),
+            reader.GetDecimal(3),
+            reader.GetInt32(4));
+
+        return Ok(product);
     }
 
     [HttpGet("filter-stock")]
@@ -50,9 +70,9 @@ public class AdoProductController(IConfiguration configuration) : ControllerBase
 
     // Disconnected: Fill mở/đóng kết nối; DataTable còn dùng được sau Dispose.
     [HttpGet("disconnected-cache")]
-    public IActionResult DisconnectedCache()
+    public async Task<IActionResult> DisconnectedCache()
     {
-        using var table = LoadTable($"SELECT {Columns} FROM SanPham ORDER BY MaSanPham");
+        using var table = await Task.Run(() => LoadTable($"SELECT {Columns} FROM SanPham ORDER BY MaSanPham"));
         var data = table.Rows.Cast<DataRow>().Select(row => new ProductLookupDto(
             (int)row[0], (string)row[1], (string)row[2], (decimal)row[3], (int)row[4])).ToList();
         return Ok(new { totalLoaded = data.Count, cachedAt = DateTime.Now, data });
@@ -60,9 +80,9 @@ public class AdoProductController(IConfiguration configuration) : ControllerBase
 
     [HttpGet("count-by-category")]
     [Authorize(Roles = "Admin,Warehouse")]
-    public IActionResult CountByCategory()
+    public async Task<IActionResult> CountByCategory()
     {
-        using var table = LoadTable("SELECT MaNhomHang, COUNT(*) AS Total FROM SanPham GROUP BY MaNhomHang ORDER BY MaNhomHang");
+        using var table = await Task.Run(() => LoadTable("SELECT MaNhomHang, COUNT(*) AS Total FROM SanPham GROUP BY MaNhomHang ORDER BY MaNhomHang"));
         return Ok(table.Rows.Cast<DataRow>().Select(row => new {
             categoryId = (int)row[0], total = (int)row[1] }).ToList());
     }

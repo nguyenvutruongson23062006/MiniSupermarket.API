@@ -1,9 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MiniSupermarket.API.Models
 {
-    // Model đại diện cho bảng sản phẩm
+    // Model đại diện cho bảng sản phẩm (Entity Product)
     [Table("SanPham")]
     public class SanPham
     {
@@ -22,11 +22,14 @@ namespace MiniSupermarket.API.Models
         [StringLength(150)]
         public string TenSanPham { get; set; } = string.Empty;
 
-        // Giá bán
+        // Giá bán (Ràng buộc: giá bán > 0)
+        [Required(ErrorMessage = "Giá bán không được để trống")]
+        [Range(0.01, double.MaxValue, ErrorMessage = "Giá bán phải lớn hơn 0!")]
         [Column(TypeName = "decimal(18,2)")]
         public decimal GiaBan { get; set; }
 
         // Số lượng tồn kho
+        [Range(0, int.MaxValue, ErrorMessage = "Số lượng tồn kho không được âm!")]
         public int SoLuongTon { get; set; }
 
         // Mã nhóm hàng - Khóa ngoại

@@ -1,4 +1,3 @@
-﻿
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -21,7 +20,10 @@ namespace MiniSupermarket.API.Controllers
             _context = context;
         }
 
-        // LINQ được thực thi trên SQL Server: JOIN nhóm hàng, ORDER BY, OFFSET/FETCH.
+        // ============================================================
+        // 1. Phân trang dữ liệu sản phẩm trên máy chủ bằng LINQ Skip & Take
+        // GET /api/products/paged?keyword=...&categoryId=...&pageNumber=1&pageSize=5
+        // ============================================================
         [HttpGet("paged")]
         [Authorize(Roles = "Admin,Warehouse")]
         public async Task<ActionResult<PagedResult<ProductItemDto>>> GetPagedProducts(
@@ -32,39 +34,58 @@ namespace MiniSupermarket.API.Controllers
             pageNumber = Math.Max(1, pageNumber);
             if (pageSize < 1 || pageSize > 50) pageSize = 5;
 
-            var query = _context.SanPhams.Include(p => p.NhomHang)
-                .AsNoTracking().AsQueryable();
+            var query = _context.SanPhams
+                .Include(p => p.NhomHang)
+                .AsNoTracking()
+                .AsQueryable();
+
             if (!string.IsNullOrWhiteSpace(keyword))
             {
                 string search = keyword.Trim().ToLower();
                 query = query.Where(p => p.TenSanPham.ToLower().Contains(search)
                     || p.MaVach.Contains(search));
             }
+
             if (categoryId.HasValue && categoryId > 0)
+            {
                 query = query.Where(p => p.MaNhomHang == categoryId);
+            }
 
             int totalItems = await query.CountAsync(cancellationToken);
             int totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
-            // Tránh tràn số Skip khi client gửi số trang quá lớn.
+
+            // Tránh tràn số Skip khi client gửi số trang quá lớn
             long offset = (long)(pageNumber - 1) * pageSize;
             var items = offset > int.MaxValue ? new List<ProductItemDto>() : await query
-                .OrderBy(p => p.MaSanPham).Skip((int)offset).Take(pageSize)
+                .OrderBy(p => p.MaSanPham)
+                .Skip((int)offset)
+                .Take(pageSize)
                 .Select(p => new ProductItemDto
                 {
-                    ProductId = p.MaSanPham, Barcode = p.MaVach,
-                    ProductName = p.TenSanPham, Price = p.GiaBan,
-                    StockQuantity = p.SoLuongTon, CategoryId = p.MaNhomHang,
+                    ProductId = p.MaSanPham,
+                    Barcode = p.MaVach,
+                    ProductName = p.TenSanPham,
+                    Price = p.GiaBan,
+                    StockQuantity = p.SoLuongTon,
+                    CategoryId = p.MaNhomHang,
                     CategoryName = p.NhomHang != null ? p.NhomHang.TenNhomHang : string.Empty
-                }).ToListAsync(cancellationToken);
+                })
+                .ToListAsync(cancellationToken);
 
             return Ok(new PagedResult<ProductItemDto>
             {
-                CurrentPage = pageNumber, PageSize = pageSize, TotalItems = totalItems,
-                TotalPages = totalPages, Items = items
+                CurrentPage = pageNumber,
+                PageSize = pageSize,
+                TotalItems = totalItems,
+                TotalPages = totalPages,
+                Items = items
             });
         }
 
-        // Lấy danh sách toàn bộ sản phẩm
+        // ============================================================
+        // 2. Lấy danh sách toàn bộ sản phẩm (Dùng DTO, AsNoTracking, Include)
+        // GET /api/products
+        // ============================================================
         [HttpGet]
         [Authorize(Roles = "Admin,Warehouse")]
         public async Task<IActionResult> GetAll()
@@ -72,52 +93,57 @@ namespace MiniSupermarket.API.Controllers
             var products = await _context.SanPhams
                 .AsNoTracking()
                 .Include(p => p.NhomHang)
-                .Select(p => new
+                .Select(p => new ProductResponseDto
                 {
-                    p.MaSanPham,
-                    p.MaVach,
-                    p.TenSanPham,
-                    p.GiaBan,
-                    p.SoLuongTon,
-                    p.MaNhomHang,
-                    TenNhomHang = p.NhomHang != null
-                        ? p.NhomHang.TenNhomHang
-                        : ""
+                    MaSanPham = p.MaSanPham,
+                    MaVach = p.MaVach,
+                    TenSanPham = p.TenSanPham,
+                    GiaBan = p.GiaBan,
+                    SoLuongTon = p.SoLuongTon,
+                    MaNhomHang = p.MaNhomHang,
+                    TenNhomHang = p.NhomHang != null ? p.NhomHang.TenNhomHang : string.Empty
                 })
                 .ToListAsync();
 
             return Ok(products);
         }
 
-        // Lấy thông tin một sản phẩm theo mã
+        // ============================================================
+        // 3. Lấy thông tin một sản phẩm theo mã (Dùng DTO, AsNoTracking, Include)
+        // GET /api/products/{id}
+        // ============================================================
         [HttpGet("{id:int}")]
         [Authorize(Roles = "Admin,Warehouse")]
         public async Task<IActionResult> GetById(int id)
         {
             var product = await _context.SanPhams
                 .AsNoTracking()
+                .Include(p => p.NhomHang)
                 .Where(p => p.MaSanPham == id)
-                .Select(p => new
+                .Select(p => new ProductResponseDto
                 {
-                    p.MaSanPham,
-                    p.MaVach,
-                    p.TenSanPham,
-                    p.GiaBan,
-                    p.SoLuongTon,
-                    p.MaNhomHang,
-                    TenNhomHang = p.NhomHang != null
-                        ? p.NhomHang.TenNhomHang
-                        : ""
+                    MaSanPham = p.MaSanPham,
+                    MaVach = p.MaVach,
+                    TenSanPham = p.TenSanPham,
+                    GiaBan = p.GiaBan,
+                    SoLuongTon = p.SoLuongTon,
+                    MaNhomHang = p.MaNhomHang,
+                    TenNhomHang = p.NhomHang != null ? p.NhomHang.TenNhomHang : string.Empty
                 })
                 .FirstOrDefaultAsync();
 
             if (product == null)
-                return NotFound("Không tìm thấy sản phẩm.");
+            {
+                return NotFound(new { message = "Không tìm thấy sản phẩm." });
+            }
 
             return Ok(product);
         }
 
-        // Tra cứu nhanh sản phẩm bằng máy quét mã vạch tại quầy POS.
+        // ============================================================
+        // 4. Tra cứu nhanh sản phẩm bằng mã vạch tại quầy POS
+        // GET /api/products/barcode/{barcode}
+        // ============================================================
         [HttpGet("barcode/{barcode}")]
         [Authorize(Roles = "Admin,Cashier")]
         public async Task<IActionResult> GetByBarcode(string barcode)
@@ -125,158 +151,218 @@ namespace MiniSupermarket.API.Controllers
             barcode = (barcode ?? string.Empty).Trim();
 
             if (string.IsNullOrWhiteSpace(barcode))
-                return BadRequest("Mã vạch không được để trống.");
+            {
+                return BadRequest(new { message = "Mã vạch không được để trống." });
+            }
 
             var product = await _context.SanPhams
                 .AsNoTracking()
+                .Include(p => p.NhomHang)
                 .Where(p => p.MaVach == barcode)
-                .Select(p => new
+                .Select(p => new ProductResponseDto
                 {
-                    p.MaSanPham,
-                    p.MaVach,
-                    p.TenSanPham,
-                    p.GiaBan,
-                    p.SoLuongTon,
-                    p.MaNhomHang,
-                    TenNhomHang = p.NhomHang != null
-                        ? p.NhomHang.TenNhomHang
-                        : string.Empty
+                    MaSanPham = p.MaSanPham,
+                    MaVach = p.MaVach,
+                    TenSanPham = p.TenSanPham,
+                    GiaBan = p.GiaBan,
+                    SoLuongTon = p.SoLuongTon,
+                    MaNhomHang = p.MaNhomHang,
+                    TenNhomHang = p.NhomHang != null ? p.NhomHang.TenNhomHang : string.Empty
                 })
                 .FirstOrDefaultAsync();
 
             if (product == null)
-                return NotFound("Không tìm thấy sản phẩm có mã vạch này.");
+            {
+                return NotFound(new { message = "Không tìm thấy sản phẩm có mã vạch này." });
+            }
 
             return Ok(product);
         }
 
-        // Tìm kiếm sản phẩm theo tên hoặc mã vạch
+        // ============================================================
+        // 5. Tìm kiếm sản phẩm theo tên hoặc mã vạch bằng LINQ Contains
+        // GET /api/products/search?keyword=...
+        // ============================================================
         [HttpGet("search")]
         [Authorize(Roles = "Admin,Warehouse")]
-        public async Task<IActionResult> Search(
-            [FromQuery] string keyword)
+        public async Task<IActionResult> Search([FromQuery] string keyword)
         {
             if (string.IsNullOrWhiteSpace(keyword))
-                return BadRequest("Vui lòng nhập từ khóa.");
+            {
+                return BadRequest(new { message = "Vui lòng nhập từ khóa." });
+            }
 
             var products = await _context.SanPhams
                 .AsNoTracking()
-                .Where(p =>
-                    p.TenSanPham.Contains(keyword) ||
-                    p.MaVach.Contains(keyword))
-                .Select(p => new
+                .Include(p => p.NhomHang)
+                .Where(p => p.TenSanPham.Contains(keyword) || p.MaVach.Contains(keyword))
+                .Select(p => new ProductResponseDto
                 {
-                    p.MaSanPham,
-                    p.MaVach,
-                    p.TenSanPham,
-                    p.GiaBan,
-                    p.SoLuongTon,
-                    p.MaNhomHang,
-                    TenNhomHang = p.NhomHang != null
-                        ? p.NhomHang.TenNhomHang
-                        : ""
+                    MaSanPham = p.MaSanPham,
+                    MaVach = p.MaVach,
+                    TenSanPham = p.TenSanPham,
+                    GiaBan = p.GiaBan,
+                    SoLuongTon = p.SoLuongTon,
+                    MaNhomHang = p.MaNhomHang,
+                    TenNhomHang = p.NhomHang != null ? p.NhomHang.TenNhomHang : string.Empty
                 })
                 .ToListAsync();
 
             return Ok(products);
         }
 
-        // Thêm sản phẩm mới
+        // ============================================================
+        // 6. Thêm sản phẩm mới (Nhận DTO, Trả mã 201 CreatedAtAction)
+        // POST /api/products
+        // ============================================================
         [HttpPost]
         [Authorize(Roles = "Admin,Warehouse")]
-        public async Task<IActionResult> Create(
-            [FromBody] SanPham product)
+        public async Task<IActionResult> Create([FromBody] CreateProductDto dto)
         {
-            if (string.IsNullOrWhiteSpace(product.TenSanPham))
-                return BadRequest("Tên sản phẩm không được để trống.");
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
 
-            if (string.IsNullOrWhiteSpace(product.MaVach))
-                return BadRequest("Mã vạch không được để trống.");
+            if (dto.GiaBan <= 0)
+            {
+                return BadRequest(new { message = "Giá bán phải lớn hơn 0." });
+            }
 
-            if (product.GiaBan < 0 || product.SoLuongTon < 0)
-                return BadRequest("Giá bán và tồn kho không được âm.");
+            if (dto.SoLuongTon < 0)
+            {
+                return BadRequest(new { message = "Số lượng tồn kho không được âm." });
+            }
 
-            bool categoryExists = await _context.NhomHangs
-                .AnyAsync(c => c.MaNhomHang == product.MaNhomHang);
-
-            if (!categoryExists)
-                return BadRequest("Nhóm hàng không tồn tại.");
+            var category = await _context.NhomHangs.FindAsync(dto.MaNhomHang);
+            if (category == null)
+            {
+                return BadRequest(new { message = "Nhóm hàng không tồn tại." });
+            }
 
             bool barcodeExists = await _context.SanPhams
-                .AnyAsync(p => p.MaVach == product.MaVach);
+                .AnyAsync(p => p.MaVach == dto.MaVach.Trim());
 
             if (barcodeExists)
-                return Conflict("Mã vạch đã tồn tại.");
+            {
+                return Conflict(new { message = "Mã vạch đã tồn tại." });
+            }
 
-            product.MaSanPham = 0;
-            product.NhomHang = null!;
+            var product = new SanPham
+            {
+                MaVach = dto.MaVach.Trim(),
+                TenSanPham = dto.TenSanPham.Trim(),
+                GiaBan = dto.GiaBan,
+                SoLuongTon = dto.SoLuongTon,
+                MaNhomHang = dto.MaNhomHang
+            };
 
             _context.SanPhams.Add(product);
             await _context.SaveChangesAsync();
 
-            return Ok(product);
+            var responseDto = new ProductResponseDto
+            {
+                MaSanPham = product.MaSanPham,
+                MaVach = product.MaVach,
+                TenSanPham = product.TenSanPham,
+                GiaBan = product.GiaBan,
+                SoLuongTon = product.SoLuongTon,
+                MaNhomHang = product.MaNhomHang,
+                TenNhomHang = category.TenNhomHang
+            };
+
+            return CreatedAtAction(
+                nameof(GetById),
+                new { id = responseDto.MaSanPham },
+                responseDto);
         }
 
-        // Cập nhật thông tin sản phẩm
+        // ============================================================
+        // 7. Cập nhật thông tin sản phẩm (Nhận DTO)
+        // PUT /api/products/{id}
+        // ============================================================
         [HttpPut("{id:int}")]
         [Authorize(Roles = "Admin,Warehouse")]
-        public async Task<IActionResult> Update(
-            int id,
-            [FromBody] SanPham product)
+        public async Task<IActionResult> Update(int id, [FromBody] UpdateProductDto dto)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             var existing = await _context.SanPhams.FindAsync(id);
-
             if (existing == null)
-                return NotFound("Không tìm thấy sản phẩm.");
+            {
+                return NotFound(new { message = "Không tìm thấy sản phẩm." });
+            }
 
-            if (string.IsNullOrWhiteSpace(product.TenSanPham) ||
-                string.IsNullOrWhiteSpace(product.MaVach))
-                return BadRequest("Tên sản phẩm và mã vạch không được trống.");
+            if (dto.GiaBan <= 0)
+            {
+                return BadRequest(new { message = "Giá bán phải lớn hơn 0." });
+            }
 
-            if (product.GiaBan < 0 || product.SoLuongTon < 0)
-                return BadRequest("Giá bán và tồn kho không được âm.");
+            if (dto.SoLuongTon < 0)
+            {
+                return BadRequest(new { message = "Số lượng tồn kho không được âm." });
+            }
 
-            bool categoryExists = await _context.NhomHangs
-                .AnyAsync(c => c.MaNhomHang == product.MaNhomHang);
-
-            if (!categoryExists)
-                return BadRequest("Nhóm hàng không tồn tại.");
+            var category = await _context.NhomHangs.FindAsync(dto.MaNhomHang);
+            if (category == null)
+            {
+                return BadRequest(new { message = "Nhóm hàng không tồn tại." });
+            }
 
             bool barcodeExists = await _context.SanPhams
-                .AnyAsync(p =>
-                    p.MaVach == product.MaVach &&
-                    p.MaSanPham != id);
+                .AnyAsync(p => p.MaVach == dto.MaVach.Trim() && p.MaSanPham != id);
 
             if (barcodeExists)
-                return Conflict("Mã vạch đã tồn tại.");
+            {
+                return Conflict(new { message = "Mã vạch đã tồn tại." });
+            }
 
-            existing.MaVach = product.MaVach;
-            existing.TenSanPham = product.TenSanPham;
-            existing.GiaBan = product.GiaBan;
-            existing.SoLuongTon = product.SoLuongTon;
-            existing.MaNhomHang = product.MaNhomHang;
+            existing.MaVach = dto.MaVach.Trim();
+            existing.TenSanPham = dto.TenSanPham.Trim();
+            existing.GiaBan = dto.GiaBan;
+            existing.SoLuongTon = dto.SoLuongTon;
+            existing.MaNhomHang = dto.MaNhomHang;
 
             await _context.SaveChangesAsync();
 
-            return Ok(existing);
+            var responseDto = new ProductResponseDto
+            {
+                MaSanPham = existing.MaSanPham,
+                MaVach = existing.MaVach,
+                TenSanPham = existing.TenSanPham,
+                GiaBan = existing.GiaBan,
+                SoLuongTon = existing.SoLuongTon,
+                MaNhomHang = existing.MaNhomHang,
+                TenNhomHang = category.TenNhomHang
+            };
+
+            return Ok(responseDto);
         }
 
-        // Xóa sản phẩm
+        // ============================================================
+        // 8. Xóa sản phẩm
+        // DELETE /api/products/{id}
+        // ============================================================
         [HttpDelete("{id:int}")]
         [Authorize(Roles = "Admin,Warehouse")]
         public async Task<IActionResult> Delete(int id)
         {
             var product = await _context.SanPhams.FindAsync(id);
-
             if (product == null)
-                return NotFound("Không tìm thấy sản phẩm.");
+            {
+                return NotFound(new { message = "Không tìm thấy sản phẩm." });
+            }
 
             bool usedInOrders = await _context.ChiTietDonHangs
                 .AnyAsync(d => d.MaSanPham == id);
 
             if (usedInOrders)
-                return Conflict(
-                    "Sản phẩm đã có trong đơn hàng, không thể xóa.");
+            {
+                return Conflict(new { message = "Sản phẩm đã có trong đơn hàng, không thể xóa." });
+            }
 
             _context.SanPhams.Remove(product);
             await _context.SaveChangesAsync();
