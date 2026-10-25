@@ -20,6 +20,39 @@ namespace MiniSupermarket.API.Controllers
             _context = context;
         }
 
+        // Bài 6.1: điểm thưởng giảm dần, mã khách tăng dần để phân trang ổn định.
+        [HttpGet("paged")]
+        public async Task<ActionResult<PagedResult<CustomerItemDto>>> GetPagedCustomers(
+            [FromQuery] string? keyword, [FromQuery] int pageNumber = 1,
+            [FromQuery] int pageSize = 5, CancellationToken cancellationToken = default)
+        {
+            pageNumber = Math.Max(1, pageNumber);
+            if (pageSize < 1 || pageSize > 50) pageSize = 5;
+            var query = _context.KhachHangs.AsNoTracking().AsQueryable();
+            if (!string.IsNullOrWhiteSpace(keyword))
+            {
+                string search = keyword.Trim().ToLower();
+                query = query.Where(c => c.HoTen.ToLower().Contains(search)
+                    || c.SoDienThoai.Contains(search));
+            }
+            int totalItems = await query.CountAsync(cancellationToken);
+            long offset = (long)(pageNumber - 1) * pageSize;
+            var items = offset > int.MaxValue ? new List<CustomerItemDto>() : await query
+                .OrderByDescending(c => c.DiemTichLuy).ThenBy(c => c.MaKhachHang)
+                .Skip((int)offset).Take(pageSize)
+                .Select(c => new CustomerItemDto
+                {
+                    CustomerId = c.MaKhachHang, FullName = c.HoTen,
+                    Phone = c.SoDienThoai, Email = c.Email, Address = c.DiaChi,
+                    RewardPoints = c.DiemTichLuy
+                }).ToListAsync(cancellationToken);
+            return Ok(new PagedResult<CustomerItemDto>
+            {
+                CurrentPage = pageNumber, PageSize = pageSize, TotalItems = totalItems,
+                TotalPages = (int)Math.Ceiling((double)totalItems / pageSize), Items = items
+            });
+        }
+
         // GET: api/customers
         // Lấy danh sách khách hàng
         [HttpGet]

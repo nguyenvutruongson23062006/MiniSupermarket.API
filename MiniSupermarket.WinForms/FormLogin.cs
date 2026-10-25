@@ -10,10 +10,7 @@ namespace MiniSupermarket.WinForms
     public partial class FormLogin : Form
     {
         // Khởi tạo HttpClient kết nối đến Web API
-        private static readonly HttpClient _client = new HttpClient
-        {
-            BaseAddress = new Uri("https://localhost:7163/api/")
-        };
+        private static readonly HttpClient _client = ApiClientService.Client;
 
         // Hàm khởi tạo Form đăng nhập
         public FormLogin()
@@ -54,7 +51,7 @@ namespace MiniSupermarket.WinForms
                 };
 
                 // Gửi yêu cầu đến AuthController
-                var response = await _client.PostAsJsonAsync(
+                using var response = await _client.PostAsJsonAsync(
                     "auth/login",
                     loginData);
 

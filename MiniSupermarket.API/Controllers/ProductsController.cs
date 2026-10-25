@@ -21,6 +21,49 @@ namespace MiniSupermarket.API.Controllers
             _context = context;
         }
 
+        // LINQ được thực thi trên SQL Server: JOIN nhóm hàng, ORDER BY, OFFSET/FETCH.
+        [HttpGet("paged")]
+        [Authorize(Roles = "Admin,Warehouse")]
+        public async Task<ActionResult<PagedResult<ProductItemDto>>> GetPagedProducts(
+            [FromQuery] string? keyword, [FromQuery] int? categoryId,
+            [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 5,
+            CancellationToken cancellationToken = default)
+        {
+            pageNumber = Math.Max(1, pageNumber);
+            if (pageSize < 1 || pageSize > 50) pageSize = 5;
+
+            var query = _context.SanPhams.Include(p => p.NhomHang)
+                .AsNoTracking().AsQueryable();
+            if (!string.IsNullOrWhiteSpace(keyword))
+            {
+                string search = keyword.Trim().ToLower();
+                query = query.Where(p => p.TenSanPham.ToLower().Contains(search)
+                    || p.MaVach.Contains(search));
+            }
+            if (categoryId.HasValue && categoryId > 0)
+                query = query.Where(p => p.MaNhomHang == categoryId);
+
+            int totalItems = await query.CountAsync(cancellationToken);
+            int totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
+            // Tránh tràn số Skip khi client gửi số trang quá lớn.
+            long offset = (long)(pageNumber - 1) * pageSize;
+            var items = offset > int.MaxValue ? new List<ProductItemDto>() : await query
+                .OrderBy(p => p.MaSanPham).Skip((int)offset).Take(pageSize)
+                .Select(p => new ProductItemDto
+                {
+                    ProductId = p.MaSanPham, Barcode = p.MaVach,
+                    ProductName = p.TenSanPham, Price = p.GiaBan,
+                    StockQuantity = p.SoLuongTon, CategoryId = p.MaNhomHang,
+                    CategoryName = p.NhomHang != null ? p.NhomHang.TenNhomHang : string.Empty
+                }).ToListAsync(cancellationToken);
+
+            return Ok(new PagedResult<ProductItemDto>
+            {
+                CurrentPage = pageNumber, PageSize = pageSize, TotalItems = totalItems,
+                TotalPages = totalPages, Items = items
+            });
+        }
+
         // Lấy danh sách toàn bộ sản phẩm
         [HttpGet]
         [Authorize(Roles = "Admin,Warehouse")]

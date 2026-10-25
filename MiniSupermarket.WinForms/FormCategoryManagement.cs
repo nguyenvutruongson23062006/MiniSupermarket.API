@@ -15,10 +15,7 @@ namespace MiniSupermarket.WinForms
     public partial class FormCategoryManagement : Form
     {
         // Địa chỉ Web API của hệ thống
-        private static readonly HttpClient _client = new HttpClient
-        {
-            BaseAddress = new Uri("https://localhost:7163/api/")
-        };
+        private static readonly HttpClient _client = ApiClientService.Client;
 
         // Hàm khởi tạo Form quản lý nhóm hàng
         public FormCategoryManagement()

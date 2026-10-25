@@ -14,10 +14,7 @@ namespace MiniSupermarket.WinForms
     public partial class FormCustomerManagement : Form
     {
         // Địa chỉ Web API
-        private static readonly HttpClient _client = new HttpClient
-        {
-            BaseAddress = new Uri("https://localhost:7163/api/")
-        };
+        private static readonly HttpClient _client = ApiClientService.Client;
 
         public FormCustomerManagement()
         {
