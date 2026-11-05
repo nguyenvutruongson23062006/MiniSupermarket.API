@@ -130,16 +130,18 @@ namespace MiniSupermarket.WinForms
                     btnCustomer.Visible = true;
                     btnReports.Visible = true;
                     btnUserManage.Visible = true;
+                    ReflowSidebar(btnPOS, btnCategory, btnProduct, btnCustomer, btnReports, btnUserManage);
                     break;
 
-                // Cashier chỉ hiển thị quầy POS theo tiêu chí giao diện.
+                // Cashier sử dụng POS và quản lý khách hàng.
                 case "CASHIER":
                     btnPOS.Visible = true;
                     btnCategory.Visible = false;
                     btnProduct.Visible = false;
-                    btnCustomer.Visible = false;
+                    btnCustomer.Visible = true;
                     btnReports.Visible = false;
                     btnUserManage.Visible = false;
+                    ReflowSidebar(btnPOS, btnCustomer);
                     break;
 
                 // Warehouse: Nhóm hàng và Sản phẩm
@@ -150,6 +152,7 @@ namespace MiniSupermarket.WinForms
                     btnCustomer.Visible = false;
                     btnReports.Visible = false;
                     btnUserManage.Visible = false;
+                    ReflowSidebar(btnCategory, btnProduct);
                     break;
 
                 // Vai trò không hợp lệ
@@ -169,6 +172,23 @@ namespace MiniSupermarket.WinForms
         // =========================================
         // 5. MỞ MÀN HÌNH MẶC ĐỊNH THEO VAI TRÒ
         // =========================================
+        private void ReflowSidebar(params Button[] buttons)
+        {
+            panelSidebar.SuspendLayout();
+            try
+            {
+                // Dùng kích thước đã scale theo DPI, không giữ chỗ cho nút bị ẩn.
+                int top = btnPOS.Top;
+                int gap = Math.Max(1, (int)Math.Round(5 * DeviceDpi / 96f));
+                foreach (var button in buttons)
+                {
+                    button.Top = top;
+                    top += button.Height + gap;
+                }
+            }
+            finally { panelSidebar.ResumeLayout(true); }
+        }
+
         private void OpenDefaultScreenByRole(string role)
         {
             switch ((role ?? "").ToUpperInvariant())
