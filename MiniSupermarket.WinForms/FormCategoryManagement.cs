@@ -206,7 +206,7 @@ namespace MiniSupermarket.WinForms
             catch (Exception ex)
             {
                 MessageBox.Show(
-                    "Lỗi tải danh sách nhóm hàng:\n" + ex.Message,
+                    "Lỗi tải danh sách nhóm hàng:\n" + ApiClientService.FriendlyError(ex),
                     "Lỗi kết nối",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
@@ -337,7 +337,7 @@ namespace MiniSupermarket.WinForms
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Lỗi thêm nhóm hàng:\n" + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Lỗi thêm nhóm hàng:\n" + ApiClientService.FriendlyError(ex), "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -374,7 +374,7 @@ namespace MiniSupermarket.WinForms
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Lỗi cập nhật nhóm hàng:\n" + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Lỗi cập nhật nhóm hàng:\n" + ApiClientService.FriendlyError(ex), "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -408,7 +408,7 @@ namespace MiniSupermarket.WinForms
             catch (Exception ex)
             {
                 MessageBox.Show(
-                    "Lỗi xóa nhóm hàng:\n" + ex.Message + "\n\nNếu nhóm hàng đang có sản phẩm, CSDL không cho phép xóa.",
+                    "Lỗi xóa nhóm hàng:\n" + ApiClientService.FriendlyError(ex) + "\n\nNếu nhóm hàng đang có sản phẩm, CSDL không cho phép xóa.",
                     "Lỗi",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);

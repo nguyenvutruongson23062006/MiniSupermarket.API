@@ -7,10 +7,30 @@ namespace MiniSupermarket.WinForms
     {
         private readonly List<PosCartItem> _cart = new();
         private int? _selectedCustomerId;
+        private int _availablePoints;
+        private bool _checkingOut;
+        private readonly NumericUpDown _redeemPoints = new() { Minimum = 0, Maximum = 0, Width = 110, Left = 20, Top = 482 };
+        private readonly Label _pointsCaption = new() { Text = "Dùng điểm (1 điểm = 1.000đ): 0 điểm", Left = 20, Top = 452, Width = 340, Height = 28 };
+        private decimal PaymentTotal => _cart.Sum(x => x.ThanhTien) - _redeemPoints.Value * 1000m;
+        private void UpdatePoints()
+        {
+            _redeemPoints.Maximum = Math.Min(_availablePoints, decimal.Floor(_cart.Sum(x => x.ThanhTien) / 1000m));
+            _redeemPoints.Enabled = _selectedCustomerId.HasValue && !_checkingOut;
+            _pointsCaption.Text = $"Có {_availablePoints:N0} điểm · Dùng điểm (1 điểm = 1.000đ)";
+            CalculateChange();
+        }
 
         public FormPOS()
         {
             InitializeComponent();
+            paymentPanel.Controls.Add(_pointsCaption);
+            paymentPanel.Controls.Add(_redeemPoints);
+            _redeemPoints.ValueChanged += (_, _) => CalculateChange();
+            txtCustomerPhone.TextChanged += (_, _) =>
+            {
+                _selectedCustomerId = null; _availablePoints = 0; _redeemPoints.Value = 0;
+                lblCustomerName.Text = "Khách vãng lai"; UpdatePoints();
+            };
             ConfigureCartGrid();
 
             splitMain.Resize +=
@@ -44,6 +64,8 @@ namespace MiniSupermarket.WinForms
 
             if (splitMain.Width <= 0)
                 return;
+
+            if (splitMain.Width < splitMain.Panel1MinSize + splitMain.Panel2MinSize + splitMain.SplitterWidth) return;
 
             int splitterDistance =
                 splitMain.Width - paymentWidth - splitMain.SplitterWidth;
@@ -180,7 +202,7 @@ namespace MiniSupermarket.WinForms
                     return;
                 }
 
-                if (!await EnsureSuccessAsync(response))
+                if (IsDisposed || !await EnsureSuccessAsync(response))
                     return;
 
                 var product = await response.Content
@@ -266,7 +288,7 @@ namespace MiniSupermarket.WinForms
                 using var response =
                     await ApiClientService.Client.SendAsync(request);
 
-                if (!await EnsureSuccessAsync(response))
+                if (IsDisposed || !await EnsureSuccessAsync(response))
                     return;
 
                 var customers = await response.Content
@@ -292,7 +314,10 @@ namespace MiniSupermarket.WinForms
                     return;
                 }
 
+                if (IsDisposed || txtCustomerPhone.Text.Trim() != phone) return;
                 _selectedCustomerId = customer.MaKhachHang;
+                _availablePoints = customer.DiemTichLuy;
+                UpdatePoints();
                 lblCustomerName.Text =
                     $"{customer.HoTen} - Mã KH: {customer.MaKhachHang}";
             }
@@ -321,6 +346,7 @@ namespace MiniSupermarket.WinForms
 
         private async Task CheckoutAsync()
         {
+            if (_checkingOut) return;
             if (!btnCheckout.Enabled) return;
 
             if (_cart.Count == 0)
@@ -333,7 +359,7 @@ namespace MiniSupermarket.WinForms
                 return;
             }
 
-            decimal total = _cart.Sum(x => x.ThanhTien);
+            decimal total = PaymentTotal;
 
             if (!decimal.TryParse(
                 txtCashReceived.Text,
@@ -352,6 +378,7 @@ namespace MiniSupermarket.WinForms
             var checkoutData = new
             {
                 CustomerId = _selectedCustomerId,
+                PointsToRedeem = decimal.ToInt32(_redeemPoints.Value),
                 CustomerPhone = _selectedCustomerId.HasValue
                     ? null
                     : NullIfEmpty(txtCustomerPhone.Text),
@@ -365,7 +392,10 @@ namespace MiniSupermarket.WinForms
 
             try
             {
+                if (_checkingOut) return;
+                _checkingOut = true;
                 btnCheckout.Enabled = false;
+                splitMain.Enabled = false;
 
                 using var request = ApiClientService.CreateRequest(
                     HttpMethod.Post,
@@ -375,7 +405,7 @@ namespace MiniSupermarket.WinForms
                 using var response =
                     await ApiClientService.Client.SendAsync(request);
 
-                if (!await EnsureSuccessAsync(response))
+                if (IsDisposed || !await EnsureSuccessAsync(response))
                     return;
 
                 var result = await response.Content
@@ -401,8 +431,14 @@ namespace MiniSupermarket.WinForms
             }
             finally
             {
-                btnCheckout.Enabled = true;
-                txtBarcode.Focus();
+                _checkingOut = false;
+                if (!IsDisposed)
+                {
+                    splitMain.Enabled = true;
+                    btnCheckout.Enabled = true;
+                    UpdatePoints();
+                    txtBarcode.Focus();
+                }
             }
         }
 
@@ -443,14 +479,15 @@ namespace MiniSupermarket.WinForms
         {
             dgvCart.DataSource = null;
             dgvCart.DataSource = _cart.ToList();
-            lblTotalAmount.Text =
-                $"{_cart.Sum(x => x.ThanhTien):N0} đ";
+            UpdatePoints();
+            lblTotalAmount.Text = $"{PaymentTotal:N0} đ";
             CalculateChange();
         }
 
         private void CalculateChange()
         {
-            decimal total = _cart.Sum(x => x.ThanhTien);
+            decimal total = PaymentTotal;
+            lblTotalAmount.Text = $"{total:N0} đ";
 
             if (decimal.TryParse(
                 txtCashReceived.Text,
@@ -492,7 +529,7 @@ namespace MiniSupermarket.WinForms
         private static void ShowConnectionError(Exception ex)
         {
             MessageBox.Show(
-                "Không thể kết nối Web API:\n" + ex.Message,
+                "Không thể kết nối Web API:\n" + ApiClientService.FriendlyError(ex),
                 "Lỗi kết nối",
                 MessageBoxButtons.OK,
                 MessageBoxIcon.Error);

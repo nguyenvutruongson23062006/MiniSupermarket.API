@@ -8,7 +8,7 @@ using System.Text;
 
 namespace MiniSupermarket.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/auth")]
     [ApiController]
     public class AuthController : ControllerBase
     {

@@ -5,10 +5,10 @@ using MiniSupermarket.API.Data;
 
 namespace MiniSupermarket.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/reports")]
     [ApiController]
     [Authorize(Roles = "Admin")]
-    public class ReportsController : ControllerBase
+    public partial class ReportsController : ControllerBase
     {
         private readonly SupermarketDbContext _context;
 

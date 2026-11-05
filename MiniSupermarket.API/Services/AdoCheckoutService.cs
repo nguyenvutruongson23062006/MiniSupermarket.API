@@ -62,6 +62,21 @@ public sealed class AdoCheckoutService(IConfiguration configuration)
                     ?? throw new InvalidOperationException("Không tìm thấy khách hàng."));
             }
 
+            if (request.PointsToRedeem < 0 || request.PointsToRedeem > 1000000)
+                throw new InvalidOperationException("Số điểm đổi không hợp lệ.");
+            if (request.PointsToRedeem > 0 && !customerId.HasValue)
+                throw new InvalidOperationException("Vui lòng chọn khách hàng trước khi dùng điểm.");
+            int availablePoints = 0;
+            if (customerId.HasValue)
+            {
+                using var balance = Command(connection, transaction,
+                    "SELECT DiemTichLuy FROM KhachHang WITH (UPDLOCK, HOLDLOCK) WHERE MaKhachHang=@Id",
+                    Number("@Id", customerId.Value));
+                availablePoints = Convert.ToInt32(await balance.ExecuteScalarAsync(ct));
+                if (request.PointsToRedeem > availablePoints)
+                    throw new InvalidOperationException("Khách hàng không đủ điểm để đổi.");
+            }
+
             string code = $"HD-{DateTime.Now:yyyyMMdd}-{Guid.NewGuid():N}";
             using var orderCommand = Command(connection, transaction, """
                 INSERT INTO DonHang (MaKhachHang, MaNguoiDung, NgayDatHang, TongTien,
@@ -113,18 +128,22 @@ public sealed class AdoCheckoutService(IConfiguration configuration)
                     throw new InvalidOperationException("Tồn kho thay đổi, vui lòng thử lại.");
             }
 
+            decimal discount = request.PointsToRedeem * 1000m;
+            if (discount > total)
+                throw new InvalidOperationException("Tiền giảm từ điểm không được vượt tổng tiền hàng.");
+            total -= discount;
             int points = customerId.HasValue ? checked((int)(total / 10000m)) : 0;
             using var finishCommand = Command(connection, transaction, """
-                UPDATE DonHang SET TongTien=@Total, TongSoLuong=@Quantity, DiemThuong=@Points
+                UPDATE DonHang SET TongTien=@Total, TongSoLuong=@Quantity, DiemThuong=@Points, DiemDaDung=@Redeemed, TienGiamDiem=@Discount
                 WHERE MaDonHang=@Id
                 """, Money("@Total", total), Number("@Quantity", quantity),
-                Number("@Points", points), Number("@Id", orderId));
+                Number("@Points", points), Number("@Redeemed", request.PointsToRedeem), Money("@Discount", discount), Number("@Id", orderId));
             await finishCommand.ExecuteNonQueryAsync(ct);
             if (customerId.HasValue)
             {
                 using var pointsCommand = Command(connection, transaction,
-                    "UPDATE KhachHang SET DiemTichLuy=DiemTichLuy+@Points WHERE MaKhachHang=@Id",
-                    Number("@Points", points), Number("@Id", customerId.Value));
+                    "UPDATE KhachHang SET DiemTichLuy=DiemTichLuy+@Points-@Redeemed WHERE MaKhachHang=@Id AND DiemTichLuy>=@Redeemed",
+                    Number("@Points", points), Number("@Redeemed", request.PointsToRedeem), Number("@Id", customerId.Value));
                 if (await pointsCommand.ExecuteNonQueryAsync(ct) != 1)
                     throw new InvalidOperationException("Không cập nhật được điểm khách hàng.");
             }
@@ -153,8 +172,9 @@ public sealed class AdoCheckoutService(IConfiguration configuration)
 
             int? customer;
             int points;
+            int redeemed;
             using (var command = Command(connection, transaction, """
-                SELECT d.MaKhachHang, d.DiemThuong, u.TenDangNhap
+                SELECT d.MaKhachHang, d.DiemThuong, u.TenDangNhap, d.DiemDaDung
                 FROM DonHang d WITH (UPDLOCK, HOLDLOCK)
                 JOIN NguoiDung u ON u.MaNguoiDung=d.MaNguoiDung
                 WHERE d.MaDonHang=@Id
@@ -167,14 +187,15 @@ public sealed class AdoCheckoutService(IConfiguration configuration)
                     throw new UnauthorizedAccessException("Thu ngân chỉ được hủy hóa đơn do mình lập.");
                 customer = reader.IsDBNull(0) ? null : reader.GetInt32(0);
                 points = reader.GetInt32(1);
+                redeemed = reader.GetInt32(3);
             }
 
             if (customer.HasValue)
             {
                 using var customerCommand = Command(connection, transaction, """
                     UPDATE KhachHang SET DiemTichLuy=CASE WHEN DiemTichLuy>=@Points
-                        THEN DiemTichLuy-@Points ELSE 0 END WHERE MaKhachHang=@Id
-                    """, Number("@Points", points), Number("@Id", customer.Value));
+                        THEN DiemTichLuy-@Points ELSE 0 END + @Redeemed WHERE MaKhachHang=@Id
+                    """, Number("@Points", points), Number("@Redeemed", redeemed), Number("@Id", customer.Value));
                 if (await customerCommand.ExecuteNonQueryAsync(ct) != 1)
                     throw new InvalidOperationException("Không tìm thấy khách hàng của hóa đơn.");
             }

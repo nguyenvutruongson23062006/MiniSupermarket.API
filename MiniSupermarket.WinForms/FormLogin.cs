@@ -123,7 +123,7 @@ namespace MiniSupermarket.WinForms
             {
                 // Xử lý lỗi kết nối Server
                 MessageBox.Show(
-                    "Lỗi kết nối đến Server: " + ex.Message,
+                    "Lỗi kết nối đến Server: " + ApiClientService.FriendlyError(ex),
                     "Lỗi hệ thống",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);

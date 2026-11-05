@@ -142,6 +142,16 @@ namespace MiniSupermarket.WinForms
             dgvProducts.DefaultCellStyle.Padding = new Padding(6, 2, 6, 2);
             dgvProducts.RowTemplate.Height = 44;
             dgvProducts.Resize += (_, _) => AdjustRowHeights(dgvProducts, PageSize);
+            dgvProducts.CellFormatting += (_, e) =>
+            {
+                if (e.RowIndex < 0 || e.CellStyle == null) return;
+                if (dgvProducts.Rows[e.RowIndex].DataBoundItem is ProductDto product && product.SoLuongTon <= 10)
+                {
+                    e.CellStyle.BackColor = Color.LightCoral;
+                    e.CellStyle.ForeColor = Color.Black;
+                    e.CellStyle.SelectionBackColor = Color.IndianRed;
+                }
+            };
             dgvProducts.DataSource = _productsSource;
         }
 
@@ -352,7 +362,7 @@ namespace MiniSupermarket.WinForms
             cboCategory.SelectedIndex = -1;
         }
 
-        private static void ShowError(Exception ex) => MessageBox.Show(ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        private static void ShowError(Exception ex) => MessageBox.Show(ApiClientService.FriendlyError(ex), "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
         // Hai sự kiện này được Designer đăng ký, không đăng ký lần thứ hai trong constructor.
         private async void button1_Click(object sender, EventArgs e) => await AddProductAsync();
         private async void btnLoad_Click(object sender, EventArgs e)

@@ -14,6 +14,7 @@ namespace MiniSupermarket.WinForms
         public FormMainShell()
         {
             InitializeComponent();
+            DoubleBuffered = true;
 
             // Đăng ký sự kiện khi Form được mở
             this.Load += FormMainShell_Load;
@@ -57,6 +58,9 @@ namespace MiniSupermarket.WinForms
             string screenTitle,
             Button senderButton)
         {
+            panelMainContent.SuspendLayout();
+            try
+            {
             // Đóng Form đang hiển thị
             if (_activeForm != null)
             {
@@ -86,6 +90,8 @@ namespace MiniSupermarket.WinForms
 
             childForm.BringToFront();
             childForm.Show();
+            }
+            finally { panelMainContent.ResumeLayout(true); }
         }
 
         // =========================================
@@ -126,12 +132,12 @@ namespace MiniSupermarket.WinForms
                     btnUserManage.Visible = true;
                     break;
 
-                // Cashier: Bán hàng và Khách hàng
+                // Cashier chỉ hiển thị quầy POS theo tiêu chí giao diện.
                 case "CASHIER":
                     btnPOS.Visible = true;
                     btnCategory.Visible = false;
                     btnProduct.Visible = false;
-                    btnCustomer.Visible = true;
+                    btnCustomer.Visible = false;
                     btnReports.Visible = false;
                     btnUserManage.Visible = false;
                     break;

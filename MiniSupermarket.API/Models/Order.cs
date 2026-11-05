@@ -42,6 +42,11 @@ namespace MiniSupermarket.API.Models
         // Lưu điểm đã cộng để hủy đơn hoàn lại chính xác.
         public int DiemThuong { get; set; }
 
+        public int DiemDaDung { get; set; }
+
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal TienGiamDiem { get; set; }
+
         // Trạng thái đơn hàng
         [StringLength(50)]
         public string TrangThai { get; set; } = "Pending";

@@ -7,7 +7,7 @@ using MiniSupermarket.API.Models;
 namespace MiniSupermarket.API.Controllers
 {
     // API quản lý sản phẩm
-    [Route("api/[controller]")]
+    [Route("api/products")]
     [ApiController]
     [Authorize]
     public class ProductsController : ControllerBase

@@ -6,7 +6,7 @@ using MiniSupermarket.API.Models;
 
 namespace MiniSupermarket.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/categories")]
     [ApiController]
     [Authorize]
     public class CategoriesController : ControllerBase

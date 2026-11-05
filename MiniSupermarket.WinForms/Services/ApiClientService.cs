@@ -7,6 +7,14 @@ namespace MiniSupermarket.WinForms.Services
     // HttpClient dùng chung; token được cập nhật khi phiên đăng nhập thay đổi.
     public static class ApiClientService
     {
+        public static string FriendlyError(Exception ex) => ex switch
+        {
+            HttpRequestException => "Không kết nối được máy chủ. Hãy kiểm tra mạng và mở Web API rồi thử lại.",
+            TaskCanceledException => "Máy chủ phản hồi quá lâu. Vui lòng thử lại.",
+            JsonException => "Dữ liệu máy chủ trả về không hợp lệ. Vui lòng tải lại màn hình.",
+            _ => "Không thể hoàn tất thao tác. Vui lòng kiểm tra dữ liệu và thử lại."
+        };
+
         // Khởi tạo HttpClient kết nối đến Web API
         private static readonly HttpClient _client = new HttpClient
         {

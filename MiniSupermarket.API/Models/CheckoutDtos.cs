@@ -22,6 +22,9 @@ public class CheckoutRequestDto
     public int? CustomerId { get; set; }
     public string? CustomerPhone { get; set; }
 
+    [Range(0, 1000000)]
+    public int PointsToRedeem { get; set; }
+
     [Required, MinLength(1), MaxLength(200)]
     public List<CartItemCheckoutDto> Items { get; set; } = new();
 }

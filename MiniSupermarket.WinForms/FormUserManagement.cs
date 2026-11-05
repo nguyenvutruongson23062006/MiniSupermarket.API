@@ -314,7 +314,7 @@ namespace MiniSupermarket.WinForms
         private static void ShowConnectionError(Exception ex)
         {
             MessageBox.Show(
-                "Không thể kết nối Web API:\n" + ex.Message,
+                "Không thể kết nối Web API:\n" + ApiClientService.FriendlyError(ex),
                 "Lỗi kết nối",
                 MessageBoxButtons.OK,
                 MessageBoxIcon.Error);

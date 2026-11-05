@@ -213,7 +213,8 @@ namespace MiniSupermarket.WinForms
                     HoTen = x.FullName,
                     SoDienThoai = x.Phone,
                     Email = x.Email,
-                    DiaChi = x.Address
+                    DiaChi = x.Address,
+                    DiemTichLuy = x.RewardPoints
                 }).ToList();
 
                 dgvCustomers.DataSource = null;
@@ -231,7 +232,7 @@ namespace MiniSupermarket.WinForms
             catch (Exception ex)
             {
                 MessageBox.Show(
-                    "Lỗi tải danh sách khách hàng:\n" + ex.Message,
+                    "Lỗi tải danh sách khách hàng:\n" + ApiClientService.FriendlyError(ex),
                     "Lỗi kết nối",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
@@ -264,6 +265,18 @@ namespace MiniSupermarket.WinForms
             if (dgvCustomers.Columns.Count == 0) return;
 
             dgvCustomers.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+
+            if (dgvCustomers.Columns["DiemTichLuy"] != null)
+            {
+                var col = dgvCustomers.Columns["DiemTichLuy"]!;
+                col.HeaderText = "Điểm tích lũy";
+                col.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
+                col.Width = 110;
+                col.MinimumWidth = 100;
+                col.DisplayIndex = dgvCustomers.Columns.Count - 1;
+                col.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
+                col.DefaultCellStyle.Format = "N0";
+            }
 
             if (dgvCustomers.Columns["MaKhachHang"] != null)
             {
@@ -434,7 +447,7 @@ namespace MiniSupermarket.WinForms
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Lỗi thêm khách hàng:\n" + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Lỗi thêm khách hàng:\n" + ApiClientService.FriendlyError(ex), "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -461,7 +474,7 @@ namespace MiniSupermarket.WinForms
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Lỗi cập nhật khách hàng:\n" + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Lỗi cập nhật khách hàng:\n" + ApiClientService.FriendlyError(ex), "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -494,7 +507,7 @@ namespace MiniSupermarket.WinForms
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Lỗi xóa khách hàng:\n" + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Lỗi xóa khách hàng:\n" + ApiClientService.FriendlyError(ex), "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -523,6 +536,7 @@ namespace MiniSupermarket.WinForms
 
     public class CustomerDto
     {
+        public int DiemTichLuy { get; set; }
         public int MaKhachHang { get; set; }
         public string HoTen { get; set; } = string.Empty;
         public string SoDienThoai { get; set; } = string.Empty;

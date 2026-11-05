@@ -8,7 +8,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace MiniSupermarket.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/customers")]
     [ApiController]
     [Authorize(Roles = "Admin,Cashier")]
     public class CustomersController : ControllerBase
@@ -67,7 +67,8 @@ namespace MiniSupermarket.API.Controllers
                     x.HoTen,
                     x.SoDienThoai,
                     x.Email,
-                    x.DiaChi
+                    x.DiaChi,
+                    x.DiemTichLuy
                 })
                 .ToListAsync();
 
@@ -88,7 +89,8 @@ namespace MiniSupermarket.API.Controllers
                     x.HoTen,
                     x.SoDienThoai,
                     x.Email,
-                    x.DiaChi
+                    x.DiaChi,
+                    x.DiemTichLuy
                 })
                 .FirstOrDefaultAsync();
 
@@ -123,7 +125,8 @@ namespace MiniSupermarket.API.Controllers
                     x.HoTen,
                     x.SoDienThoai,
                     x.Email,
-                    x.DiaChi
+                    x.DiaChi,
+                    x.DiemTichLuy
                 })
                 .ToListAsync();
 
@@ -149,6 +152,7 @@ namespace MiniSupermarket.API.Controllers
 
             var customer = new KhachHang
             {
+                NgayDangKy = DateTime.Now,
                 HoTen = request.HoTen.Trim(),
                 SoDienThoai = phone,
                 Email = string.IsNullOrWhiteSpace(request.Email)

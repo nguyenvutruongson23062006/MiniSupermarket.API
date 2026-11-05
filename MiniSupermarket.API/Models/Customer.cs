@@ -36,6 +36,9 @@ namespace MiniSupermarket.API.Models
         // Điểm tích lũy: mỗi 10.000 đồng thanh toán được 1 điểm.
         public int DiemTichLuy { get; set; }
 
+        // Ngày đăng ký; dữ liệu cũ chưa biết ngày giữ null, không tính nhầm là khách mới.
+        public DateTime? NgayDangKy { get; set; }
+
         // Danh sách đơn hàng của khách hàng
         public virtual ICollection<DonHang>? DonHangs { get; set; }
     }

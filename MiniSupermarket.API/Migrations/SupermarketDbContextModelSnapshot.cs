@@ -244,6 +244,9 @@ namespace MiniSupermarket.API.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MaDonHang"));
 
+                    b.Property<int>("DiemDaDung")
+                        .HasColumnType("int");
+
                     b.Property<int>("DiemThuong")
                         .HasColumnType("int");
 
@@ -259,6 +262,9 @@ namespace MiniSupermarket.API.Migrations
 
                     b.Property<DateTime>("NgayDatHang")
                         .HasColumnType("datetime2");
+
+                    b.Property<decimal>("TienGiamDiem")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("TongSoLuong")
                         .HasColumnType("int");
@@ -283,10 +289,12 @@ namespace MiniSupermarket.API.Migrations
                         new
                         {
                             MaDonHang = 1,
+                            DiemDaDung = 0,
                             DiemThuong = 0,
                             MaKhachHang = 1,
                             MaNguoiDung = 1,
                             NgayDatHang = new DateTime(2026, 10, 1, 9, 0, 0, 0, DateTimeKind.Unspecified),
+                            TienGiamDiem = 0m,
                             TongSoLuong = 0,
                             TongTien = 205000m,
                             TrangThai = "Completed"
@@ -294,10 +302,12 @@ namespace MiniSupermarket.API.Migrations
                         new
                         {
                             MaDonHang = 2,
+                            DiemDaDung = 0,
                             DiemThuong = 0,
                             MaKhachHang = 2,
                             MaNguoiDung = 2,
                             NgayDatHang = new DateTime(2026, 10, 1, 10, 0, 0, 0, DateTimeKind.Unspecified),
+                            TienGiamDiem = 0m,
                             TongSoLuong = 0,
                             TongTien = 115000m,
                             TrangThai = "Completed"
@@ -305,10 +315,12 @@ namespace MiniSupermarket.API.Migrations
                         new
                         {
                             MaDonHang = 3,
+                            DiemDaDung = 0,
                             DiemThuong = 0,
                             MaKhachHang = 3,
                             MaNguoiDung = 2,
                             NgayDatHang = new DateTime(2026, 10, 2, 11, 0, 0, 0, DateTimeKind.Unspecified),
+                            TienGiamDiem = 0m,
                             TongSoLuong = 0,
                             TongTien = 165000m,
                             TrangThai = "Completed"
@@ -316,10 +328,12 @@ namespace MiniSupermarket.API.Migrations
                         new
                         {
                             MaDonHang = 4,
+                            DiemDaDung = 0,
                             DiemThuong = 0,
                             MaKhachHang = 4,
                             MaNguoiDung = 3,
                             NgayDatHang = new DateTime(2026, 10, 2, 14, 0, 0, 0, DateTimeKind.Unspecified),
+                            TienGiamDiem = 0m,
                             TongSoLuong = 0,
                             TongTien = 95000m,
                             TrangThai = "Completed"
@@ -327,10 +341,12 @@ namespace MiniSupermarket.API.Migrations
                         new
                         {
                             MaDonHang = 5,
+                            DiemDaDung = 0,
                             DiemThuong = 0,
                             MaKhachHang = 5,
                             MaNguoiDung = 1,
                             NgayDatHang = new DateTime(2026, 10, 3, 9, 30, 0, 0, DateTimeKind.Unspecified),
+                            TienGiamDiem = 0m,
                             TongSoLuong = 0,
                             TongTien = 110000m,
                             TrangThai = "Completed"
@@ -338,10 +354,12 @@ namespace MiniSupermarket.API.Migrations
                         new
                         {
                             MaDonHang = 6,
+                            DiemDaDung = 0,
                             DiemThuong = 0,
                             MaKhachHang = 1,
                             MaNguoiDung = 2,
                             NgayDatHang = new DateTime(2026, 10, 3, 13, 0, 0, 0, DateTimeKind.Unspecified),
+                            TienGiamDiem = 0m,
                             TongSoLuong = 0,
                             TongTien = 88000m,
                             TrangThai = "Completed"
@@ -349,10 +367,12 @@ namespace MiniSupermarket.API.Migrations
                         new
                         {
                             MaDonHang = 7,
+                            DiemDaDung = 0,
                             DiemThuong = 0,
                             MaKhachHang = 2,
                             MaNguoiDung = 3,
                             NgayDatHang = new DateTime(2026, 10, 4, 10, 30, 0, 0, DateTimeKind.Unspecified),
+                            TienGiamDiem = 0m,
                             TongSoLuong = 0,
                             TongTien = 170000m,
                             TrangThai = "Completed"
@@ -360,10 +380,12 @@ namespace MiniSupermarket.API.Migrations
                         new
                         {
                             MaDonHang = 8,
+                            DiemDaDung = 0,
                             DiemThuong = 0,
                             MaKhachHang = 3,
                             MaNguoiDung = 1,
                             NgayDatHang = new DateTime(2026, 10, 5, 15, 0, 0, 0, DateTimeKind.Unspecified),
+                            TienGiamDiem = 0m,
                             TongSoLuong = 0,
                             TongTien = 165000m,
                             TrangThai = "Completed"
@@ -371,10 +393,12 @@ namespace MiniSupermarket.API.Migrations
                         new
                         {
                             MaDonHang = 9,
+                            DiemDaDung = 0,
                             DiemThuong = 0,
                             MaKhachHang = 4,
                             MaNguoiDung = 2,
                             NgayDatHang = new DateTime(2026, 10, 6, 16, 0, 0, 0, DateTimeKind.Unspecified),
+                            TienGiamDiem = 0m,
                             TongSoLuong = 0,
                             TongTien = 185000m,
                             TrangThai = "Completed"
@@ -382,10 +406,12 @@ namespace MiniSupermarket.API.Migrations
                         new
                         {
                             MaDonHang = 10,
+                            DiemDaDung = 0,
                             DiemThuong = 0,
                             MaKhachHang = 5,
                             MaNguoiDung = 3,
                             NgayDatHang = new DateTime(2026, 10, 7, 17, 0, 0, 0, DateTimeKind.Unspecified),
+                            TienGiamDiem = 0m,
                             TongSoLuong = 0,
                             TongTien = 195000m,
                             TrangThai = "Completed"
@@ -416,6 +442,9 @@ namespace MiniSupermarket.API.Migrations
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("NgayDangKy")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("SoDienThoai")
                         .IsRequired()
